@@ -18,6 +18,7 @@ android {
 }
 
 val exportedLibs = listOf(
+    Deps.Libs.MultiPlatform.mokoResources,
     Deps.Libs.MultiPlatform.mokoMvvm
 )
 
@@ -26,6 +27,7 @@ setupFramework(exports = exportedLibs)
 dependencies {
     mppLibrary(Deps.Libs.MultiPlatform.kotlinStdLib)
     mppLibrary(Deps.Libs.MultiPlatform.coroutines)
+
     mppLibrary(Deps.Libs.MultiPlatform.mokoErrors)
 
     androidLibrary(Deps.Libs.Android.lifecycle)

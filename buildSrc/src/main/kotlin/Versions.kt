@@ -11,6 +11,7 @@ object Versions {
 
     const val kotlin = "1.3.72"
     private const val androidArch = "2.0.0"
+    private const val mokoResources = "0.11.0"
 
     object Plugins {
         const val android = "3.6.1"
@@ -29,6 +30,7 @@ object Versions {
             const val coroutines = "1.3.4"
             const val mokoErrors = "0.1.0"
             const val mokoMvvm = "0.7.0"
+            const val mokoResources = Versions.mokoResources
         }
     }
 

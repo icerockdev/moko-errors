@@ -7,7 +7,18 @@ import MultiPlatformLibrary
 
 class TestViewController: UIViewController {
     
+    private var viewModel: SimpleViewModel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ExceptionRegistryKt.doInitExceptionRegistry()
+        
+        viewModel = SimpleViewModelKt.createSimpleViewModel(errorEventsDispatcher: EventsDispatcher())
+        viewModel.exceptionHandler.bind(viewController: self)
+    }
+    
+    @IBAction func onRunAlertButtonPressed() {
+        viewModel.onAlertButtonClick()
     }
 }
