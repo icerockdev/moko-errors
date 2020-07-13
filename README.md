@@ -3,7 +3,6 @@
 
 # Mobile Kotlin errors
 This is a Kotlin MultiPlatform library that contains pagination logic for kotlin multiplatform.
-Depends on [moko-mvvm](https://github.com/icerockdev/moko-mvvm).
 
 ## Table of Contents
 - [Features](#features)
@@ -17,10 +16,14 @@ Depends on [moko-mvvm](https://github.com/icerockdev/moko-mvvm).
 - [License](#license)
 
 ## Features
-- **Pagination** implements pagination logic for the data from abstract `PagedListDataSource`.
-- Managing a data loading process using **Pagination** asynchronous functions: `loadFirstPage`, `loadNextPage`,
-`refresh` or their duplicates with `suspend` modifier.
-- Observing states of **Pagination** using `LiveData` from **moko-mvvm**.
+- **ExceptionHandler** implements safe code execution and automatic exception display using **ErrorPresenter**.
+- **ExceptionMappersRegistry** singleton object, registry that stores a set of exception converters
+to error classes required for **ErrorPresenter** objects.
+- **ErrorPresenter** classes implements a strategy for displaying exceptions in a user-friendly form
+on the platforms. Converts the exception class to an error object to display. There are several
+`ErrorPresenter` implementations: `AlertErrorPresenter` - displays errors text in alert dialogs,
+`ToastErrorPresenter` - displays errors text in toasts for Android and in alert dialog for iOS,
+`SnackBarErrorPresenter` - displays errors text in snackbar for Android and in alert dialog for iOS.
 
 ## Requirements
 - Gradle version 5.6.4+
@@ -50,8 +53,131 @@ dependencies {
 
 ## Usage
 
-You can use **Pagination** in `commonMain` sourceset.
+#### ExceptionHandler
 
+E.g. declare `ExceptionHandler` property in some `ViewModel` class:
+
+```kotlin
+class SimpleViewModel(
+    val exceptionHandler: ExceptionHandler
+) : ViewModel() {
+    // ...
+}
+```
+
+Bind `ExceptionHandler` in the platform code.
+
+On Android in an `Activity` of `Fragment`: 
+
+```kotlin
+viewModel.exceptionHandler.bind(
+    lifecycleOwner = this,
+    activity = this
+)
+```
+
+On iOS in a `ViewController`:
+
+```swift
+viewModel.exceptionHandler.bind(viewController: self)
+```
+
+Creating instances of `ExceptionHandler` class:
+
+```kotlin
+ExceptionHandler(
+    errorEventsDispatcher = eventsDispatcherInstance, // moko-mvvm EventsDispatcher instance
+    errorPresenter = errorsPresenterInstance // concrete ErrorPresenter implementation
+)
+```
+
+And use it to safe requests in `ViewModel`:
+
+```kotlin
+fun onSendRequest() {
+    viewModelScope.launch {
+        exceptionHandler.handle {
+            serverRequest() // Some dangerous code that can throw an exception
+        }.finally {
+            // Optional finally block
+        }.execute() // Executes handler block
+    }
+}
+```
+
+Also you can add some custom `catch` handlers for `ExceptionHandler`:
+
+```kotlin
+fun onSendRequest() {
+    viewModelScope.launch {
+        exceptionHandler.handle {
+            serverRequest()
+        }.catch<IllegalArgumentException> { // Specifying a specific exception class
+            // Some custom handler code
+            false // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
+        }.execute()
+    }
+}
+```
+
+#### ExceptionMappersRegistry
+
+Registration of simple custom exceptions mapper:
+
+```kotlin
+ExceptionMappersRegistry
+    .register<IllegalArgumentException, StringDesc> { // Maps IllegalArgumentException instances to StringDesc
+        MR.strings.illegalArgumentText.desc()
+    }
+    .register<HttpException, Int> { // Maps HttpException instances to Int
+        it.code
+    }
+```
+
+Registration of custom exception mapper with condition:
+
+```kotlin
+ExceptionMappersRegistry.condition<StringDesc>( // Registers exception mapper Throwable -> StringDesc
+    condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
+    mapper = { MR.strings.myExceptionText.desc() } // Mapper for Throwable that matches to the condition
+)
+```
+
+The registration can be done in the form of an endless chain:
+
+```kotlin
+ExceptionMappersRegistry
+    .condition<StringDesc>(
+        condition = { it is CustomException && it.code == 10 },
+        mapper = { MR.strings.myExceptionText.desc() }
+    )
+    .register<IllegalArgumentException, StringDesc> {
+        MR.strings.illegalArgumentText.desc()
+    }
+    .register<HttpException, Int> {
+        it.code
+    }
+```
+
+After initializing the registry, you can pass exception mappers of `(Throwable) -> StringDesc` 
+signature from the `ExceptionMappersRegistry` to an `ErrorPresenter`:
+
+```kotlin
+val alertErrorPresenter = AlertErrorPresenter(
+    exceptionMapper = ExceptionMappersRegistry::throwableToStringDesc,
+    alertTitle = "Error".desc()
+)
+```
+
+Or you can create your own mapper using extensions:
+
+```kotlin
+fun <E : Throwable> ExceptionMappersRegistry.throwableToInt(e: E): Int {
+    return find<Int, E>(e) // Tries to find mapper (Throwable) -> Int in the registry 
+        ?.invoke(e) // If it was found - invokes it
+        ?: 0 // Or default value
+}
+```
 
 ## Samples
 Please see more examples in the [sample directory](sample).
