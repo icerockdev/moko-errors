@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("kotlin-android-extensions")
     id("dev.icerock.mobile.multiplatform")
+    id("dev.icerock.mobile.multiplatform-resources")
     id("maven-publish")
 }
 
@@ -29,6 +30,11 @@ dependencies {
     androidLibrary(Deps.Libs.Android.material)
 
     mppLibrary(Deps.Libs.MultiPlatform.mokoMvvm)
+    mppLibrary(Deps.Libs.MultiPlatform.mokoResources)
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "dev.icerock.moko.errors"
 }
 
 publishing {

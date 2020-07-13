@@ -17,6 +17,7 @@ object Versions {
         const val android = "3.6.1"
 
         const val kotlin = Versions.kotlin
+        const val mokoResources = Versions.mokoResources
     }
 
     object Libs {

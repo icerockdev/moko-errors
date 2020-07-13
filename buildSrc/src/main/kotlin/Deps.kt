@@ -8,6 +8,8 @@ object Deps {
             "com.android.tools.build:gradle:${Versions.Plugins.android}"
         const val kotlin =
             "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.Plugins.kotlin}"
+        const val mokoResources =
+            "dev.icerock.moko:resources-generator:${Versions.Plugins.mokoResources}"
     }
 
     object Libs {
@@ -72,6 +74,7 @@ object Deps {
         "com.android.application" to Plugins.android,
         "com.android.library" to Plugins.android,
         "org.jetbrains.kotlin.multiplatform" to Plugins.kotlin,
+        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources,
         "kotlin-kapt" to Plugins.kotlin,
         "kotlin-android" to Plugins.kotlin
     )

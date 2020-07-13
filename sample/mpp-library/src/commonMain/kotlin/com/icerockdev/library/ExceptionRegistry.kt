@@ -1,13 +1,16 @@
 package com.icerockdev.library
 
-import dev.icerock.moko.errors.ExceptionMappersRegistry
+import dev.icerock.moko.errors.registry.ExceptionMappersRegistry
 import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
 
 fun initExceptionRegistry() {
     ExceptionMappersRegistry
+        .condition<StringDesc>(
+            condition = { it is CustomException && it.code == 10 },
+            mapper = { MR.strings.myExceptionText.desc() }
+        )
         .register<IllegalArgumentException, StringDesc> {
-            "Wrong argument!".desc()
+            MR.strings.illegalArgumentText.desc()
         }
-        .setUnknownErrorText("Unknown error".desc())
 }
