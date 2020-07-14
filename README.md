@@ -2,7 +2,8 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) ![kotlin-version](https://img.shields.io/badge/kotlin-1.3.72-orange)
 
 # Mobile Kotlin errors
-This is a Kotlin MultiPlatform library that contains pagination logic for kotlin multiplatform.
+This is a Kotlin MultiPlatform library that provides automatic exception handling and
+automatic error displaying to a screen.
 
 ## Table of Contents
 - [Features](#features)
