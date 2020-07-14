@@ -1,4 +1,3 @@
-![moko-errors](img/logo.png)  
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) ![kotlin-version](https://img.shields.io/badge/kotlin-1.3.72-orange)
 
 # Mobile Kotlin errors
