@@ -7,8 +7,8 @@ package com.icerockdev.library
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.handler.ExceptionHandler
 import dev.icerock.moko.errors.presenters.AlertErrorPresenter
-import dev.icerock.moko.errors.registry.ExceptionMappersRegistry
-import dev.icerock.moko.errors.registry.throwableToStringDesc
+import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
+import dev.icerock.moko.errors.mappers.throwableToStringDesc
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
@@ -23,7 +23,7 @@ fun createSimpleViewModel(errorEventsDispatcher: EventsDispatcher<ErrorEventList
         exceptionHandler = ExceptionHandler(
             errorEventsDispatcher = errorEventsDispatcher,
             errorPresenter = AlertErrorPresenter(
-                exceptionMapper = ExceptionMappersRegistry::throwableToStringDesc,
+                exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
                 alertTitle = MR.strings.errorDialogTitle.desc()
             )
         )

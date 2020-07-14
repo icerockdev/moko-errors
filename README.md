@@ -17,7 +17,7 @@ automatic error displaying to a screen.
 
 ## Features
 - **ExceptionHandler** implements safe code execution and automatic exception display using **ErrorPresenter**.
-- **ExceptionMappersRegistry** singleton object, registry that stores a set of exception converters
+- **ExceptionMappersStorage** singleton object, storage that stores a set of exception converters
 to error classes required for **ErrorPresenter** objects.
 - **ErrorPresenter** classes implements a strategy for displaying exceptions in a user-friendly form
 on the platforms. Converts the exception class to an error object to display. There are several
@@ -120,12 +120,12 @@ fun onSendRequest() {
 }
 ```
 
-#### ExceptionMappersRegistry
+#### ExceptionMappersStorage
 
 Registration of simple custom exceptions mapper:
 
 ```kotlin
-ExceptionMappersRegistry
+ExceptionMappersStorage
     .register<IllegalArgumentException, StringDesc> { // Maps IllegalArgumentException instances to StringDesc
         MR.strings.illegalArgumentText.desc()
     }
@@ -137,7 +137,7 @@ ExceptionMappersRegistry
 Registration of custom exception mapper with condition:
 
 ```kotlin
-ExceptionMappersRegistry.condition<StringDesc>( // Registers exception mapper Throwable -> StringDesc
+ExceptionMappersStorage.condition<StringDesc>( // Registers exception mapper Throwable -> StringDesc
     condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
     mapper = { MR.strings.myExceptionText.desc() } // Mapper for Throwable that matches to the condition
 )
@@ -146,7 +146,7 @@ ExceptionMappersRegistry.condition<StringDesc>( // Registers exception mapper Th
 The registration can be done in the form of an endless chain:
 
 ```kotlin
-ExceptionMappersRegistry
+ExceptionMappersStorage
     .condition<StringDesc>(
         condition = { it is CustomException && it.code == 10 },
         mapper = { MR.strings.myExceptionText.desc() }
@@ -160,11 +160,11 @@ ExceptionMappersRegistry
 ```
 
 After initializing the registry, you can pass exception mappers of `(Throwable) -> StringDesc` 
-signature from the `ExceptionMappersRegistry` to an `ErrorPresenter`:
+signature from the `ExceptionMappersStorage` to an `ErrorPresenter`:
 
 ```kotlin
 val alertErrorPresenter = AlertErrorPresenter(
-    exceptionMapper = ExceptionMappersRegistry::throwableToStringDesc,
+    exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
     alertTitle = "Error".desc()
 )
 ```
@@ -172,7 +172,7 @@ val alertErrorPresenter = AlertErrorPresenter(
 Or you can create your own mapper using extensions:
 
 ```kotlin
-fun <E : Throwable> ExceptionMappersRegistry.throwableToInt(e: E): Int {
+fun <E : Throwable> ExceptionMappersStorage.throwableToInt(e: E): Int {
     return find<Int, E>(e) // Tries to find mapper (Throwable) -> Int in the registry 
         ?.invoke(e) // If it was found - invokes it
         ?: 0 // Or default value
