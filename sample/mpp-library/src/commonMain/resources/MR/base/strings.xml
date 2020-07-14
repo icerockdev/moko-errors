@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="errorDialogTitle">Error</string>
+	<string name="illegalArgumentText">Illegal argument.</string>
+	<string name="myExceptionText">My Exception.</string>
+</resources>

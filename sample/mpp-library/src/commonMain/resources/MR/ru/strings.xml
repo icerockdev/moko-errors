@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="errorDialogTitle">Ошибка</string>
+	<string name="illegalArgumentText">Неверный аргумент.</string>
+	<string name="myExceptionText">Произвольное исключение.</string>
+</resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zIh-nI-gcX">
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="snE-Ct-w85">
+            <objects>
+                <navigationController id="zIh-nI-gcX" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="aGe-Yj-KQZ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="6re-OL-M6R" kind="relationship" relationship="rootViewController" id="Mq9-cj-3Ve"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dpF-aw-Lyj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-5158" y="-1482"/>
+        </scene>
+        <!--moko-errors-->
+        <scene sceneID="kLd-eM-n8Y">
+            <objects>
+                <viewController id="6re-OL-M6R" customClass="TestViewController" customModule="moko_errors" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y8H-cS-RAJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="nvA-y1-NIU"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gvd-CR-NHm">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rx-Ye-J02">
+                                <rect key="frame" x="83" y="269" width="155" height="30"/>
+                                <state key="normal" title="Run alert error handler"/>
+                                <connections>
+                                    <action selector="onRunAlertButtonPressed" destination="6re-OL-M6R" eventType="touchUpInside" id="2Ch-3e-3rj"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="3rx-Ye-J02" firstAttribute="top" secondItem="y8H-cS-RAJ" secondAttribute="bottom" constant="225" id="6oJ-lB-XzS"/>
+                            <constraint firstItem="3rx-Ye-J02" firstAttribute="leading" secondItem="gvd-CR-NHm" secondAttribute="leadingMargin" constant="67" id="gvJ-bh-e0T"/>
+                            <constraint firstItem="nvA-y1-NIU" firstAttribute="top" secondItem="3rx-Ye-J02" secondAttribute="bottom" constant="269" id="vOq-ef-Au1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="3rx-Ye-J02" secondAttribute="trailing" constant="66" id="vm2-s6-3pC"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="moko-errors" id="oor-ZF-uc6"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6L8-Iz-teJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4260" y="-1482"/>
+        </scene>
+    </scenes>
+</document>

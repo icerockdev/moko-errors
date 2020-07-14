@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="moko.errors.unknownError">Неизвестная ошибка</string>
+	<string name="moko.errors.presenters.alertDialogTitle">Ошибка</string>
+	<string name="moko.errors.presenters.alertPositiveButton">Ок</string>
+</resources>
