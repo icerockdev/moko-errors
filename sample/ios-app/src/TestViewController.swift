@@ -12,7 +12,7 @@ class TestViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        ExceptionRegistryKt.doInitExceptionRegistry()
+        ExceptionStorageKt.doInitExceptionStorage()
         
         viewModel = SimpleViewModelKt.createSimpleViewModel(errorEventsDispatcher: EventsDispatcher())
         viewModel.exceptionHandler.bind(viewController: self)
