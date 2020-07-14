@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import dev.icerock.moko.errors.R
 import kotlinx.android.parcel.Parcelize
 import java.lang.IllegalStateException
 
@@ -16,7 +17,11 @@ class AlertDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val settings: DialogSettings = arguments?.getParcelable<DialogSettings>(ARGS_KEY)
-            ?: DialogSettings("Error", "Ok", "Unknown error")
+            ?: DialogSettings(
+                title = getString(R.string.moko_errors_presenters_alertDialogTitle),
+                positiveButtonText = getString(R.string.moko_errors_presenters_alertPositiveButton),
+                messageText = getString(R.string.moko_errors_unknownError)
+            )
 
         return activity?.let {
             AlertDialog.Builder(it)

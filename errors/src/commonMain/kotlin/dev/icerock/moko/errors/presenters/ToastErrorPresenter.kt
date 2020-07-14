@@ -12,7 +12,7 @@ expect class ToastErrorPresenter(
     duration: ToastDuration = ToastDuration.SHORT
 ) : ErrorPresenter
 
-enum class ToastDuration(val code: Int) {
-    SHORT(0),
-    LONG(1)
+enum class ToastDuration {
+    SHORT,
+    LONG
 }

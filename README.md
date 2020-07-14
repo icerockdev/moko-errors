@@ -31,7 +31,7 @@ on the platforms. Converts the exception class to an error object to display. Th
 - iOS version 9.0+
 
 ## Versions
-- kotlin 1.3.70
+- kotlin 1.3.72
   - 0.1.0
 
 ## Installation

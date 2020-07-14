@@ -15,7 +15,7 @@ object Versions {
     const val detekt = "1.10.0"
 
     object Plugins {
-        const val android = "3.6.1"
+        const val android = "3.6.3"
 
         const val kotlin = Versions.kotlin
         const val mokoResources = Versions.mokoResources

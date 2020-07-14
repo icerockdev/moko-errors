@@ -103,8 +103,5 @@ object ExceptionMappersStorage {
 }
 
 fun <E : BasicException> ExceptionMappersStorage.throwableToStringDesc(e: E): StringDesc {
-    return find<E, StringDesc>(
-        e
-    )
-        ?.invoke(e) ?: unknownErrorText
+    return find<E, StringDesc>(e)?.invoke(e) ?: unknownErrorText
 }

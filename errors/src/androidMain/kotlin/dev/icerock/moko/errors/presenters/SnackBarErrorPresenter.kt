@@ -19,8 +19,11 @@ actual class SnackBarErrorPresenter actual constructor(
         val rootView = activity.findViewById<View>(android.R.id.content)?.rootView
             ?: activity.window?.decorView?.findViewById<View>(android.R.id.content)
         if (rootView != null) {
-            Snackbar.make(rootView, exceptionMapper(exception).toString(activity), duration.code)
-                .show()
+            Snackbar.make(
+                rootView,
+                exceptionMapper(exception).toString(activity),
+                duration.toAndroidCode()
+            ).show()
         }
     }
 }

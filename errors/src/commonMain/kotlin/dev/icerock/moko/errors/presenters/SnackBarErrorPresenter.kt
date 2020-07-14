@@ -14,8 +14,8 @@ expect class SnackBarErrorPresenter(
     duration: SnackBarDuration = SnackBarDuration.INDEFINITE
 ) : ErrorPresenter
 
-enum class SnackBarDuration(val code: Int) {
-    INDEFINITE(-2),
-    SHORT(-1),
-    LONG(0)
+enum class SnackBarDuration {
+    INDEFINITE,
+    SHORT,
+    LONG
 }
