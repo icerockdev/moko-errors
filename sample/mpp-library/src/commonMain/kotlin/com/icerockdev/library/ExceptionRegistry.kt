@@ -4,6 +4,7 @@ import dev.icerock.moko.errors.registry.ExceptionMappersRegistry
 import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
 
+@Suppress("MagicNumber")
 fun initExceptionRegistry() {
     ExceptionMappersRegistry
         .condition<StringDesc>(

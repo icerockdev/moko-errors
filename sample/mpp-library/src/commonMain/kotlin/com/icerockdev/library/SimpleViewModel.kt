@@ -51,8 +51,9 @@ class SimpleViewModel(
     private var exceptionFlag = false
 
     // Simulates a server response with an error
+    @Suppress("MagicNumber")
     private suspend fun serverRequest() {
-        if(exceptionFlag) {
+        if (exceptionFlag) {
             exceptionFlag = !exceptionFlag
             throw CustomException(Random.nextInt(2) * 10)
         } else {

@@ -12,6 +12,7 @@ object Versions {
     const val kotlin = "1.3.72"
     private const val androidArch = "2.0.0"
     private const val mokoResources = "0.11.0"
+    const val detekt = "1.10.0"
 
     object Plugins {
         const val android = "3.6.1"

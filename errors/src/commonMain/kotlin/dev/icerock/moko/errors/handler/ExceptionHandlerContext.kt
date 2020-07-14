@@ -2,6 +2,8 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
+@file:Suppress("TooGenericExceptionCaught")
+
 package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
@@ -36,7 +38,7 @@ class ExceptionHandlerContext<T> internal constructor(
             HandlerResult.Success(block())
         } catch (e: Throwable) {
             val isHandled = catchersMap[e::class]?.invoke(e)
-            if(isHandled == null || isHandled == false) {
+            if (isHandled == null || isHandled == false) {
                 eventsDispatcher.dispatchEvent {
                     showError(e)
                 }
