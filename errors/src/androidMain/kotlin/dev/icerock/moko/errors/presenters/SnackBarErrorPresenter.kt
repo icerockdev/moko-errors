@@ -10,9 +10,9 @@ import com.google.android.material.snackbar.Snackbar
 import dev.icerock.moko.resources.desc.StringDesc
 
 actual class SnackBarErrorPresenter actual constructor(
-    exceptionMapper: (Throwable) -> StringDesc,
+    override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: SnackBarDuration
-) : ErrorPresenter<StringDesc>(exceptionMapper) {
+) : ErrorPresenter<StringDesc>() {
 
     override fun show(exception: Throwable, activity: FragmentActivity, data: StringDesc) {
         val rootView = activity.findViewById<View>(android.R.id.content)?.rootView

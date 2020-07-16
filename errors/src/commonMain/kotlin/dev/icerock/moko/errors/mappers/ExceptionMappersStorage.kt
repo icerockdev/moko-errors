@@ -76,8 +76,8 @@ object ExceptionMappersStorage {
      * Tries to find mapper for [exception] instance. First, a mapper with condition is
      * looked for. If mapper with condition was not found, then a simple mapper is looked for. If
      * the mapper was not found, it will return null.
-     * If there is no mapper for the [exception] class [E] and [E] inherits [kotlin.Error], then
-     * [IsErrorInheritorException] exception will be thrown.
+     * If there is no mapper for the [exception] of class [E] and [E] does't inherits
+     * [kotlin.Exception], then exception will be rethrown.
      */
     fun <E : Throwable, T : Any> find(
         resultClass: KClass<T>,
@@ -89,8 +89,8 @@ object ExceptionMappersStorage {
             ?.mapper as? ((E) -> T)
             ?: mappersMap.get(resultClass)?.get(exceptionClass) as? ((E) -> T)
 
-        return if (mapper == null && exception is Error) {
-            throw IsErrorInheritorException(exception)
+        return if (mapper == null && exception !is Exception) {
+            throw exception
         } else {
             mapper
         }
@@ -100,8 +100,8 @@ object ExceptionMappersStorage {
      * Tries to find mapper (E) -> T by [exception] instance. First, a mapper with condition is
      * looked for. If mapper with condition was not found, then a simple mapper is looked for. If
      * the mapper was not found, it will return null.
-     * If there is no mapper for the [exception] class [E] and [E] inherits [kotlin.Error], then
-     * [IsErrorInheritorException] exception will be thrown.
+     * If there is no mapper for the [exception] of class [E] and [E] does't inherits
+     * [kotlin.Exception], then exception will be rethrown.
      */
     inline fun <E : Throwable, reified T : Any> find(exception: E): ((E) -> T)? = find(
         resultClass = T::class,
@@ -115,6 +115,6 @@ object ExceptionMappersStorage {
     }
 }
 
-fun <E : Throwable> ExceptionMappersStorage.exceptionToStringDesc(e: E): StringDesc {
+fun <E : Throwable> ExceptionMappersStorage.throwableToStringDesc(e: E): StringDesc {
     return find<E, StringDesc>(e)?.invoke(e) ?: unknownErrorText
 }

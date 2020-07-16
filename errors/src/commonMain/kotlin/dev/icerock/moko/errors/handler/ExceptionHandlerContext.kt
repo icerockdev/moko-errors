@@ -17,6 +17,7 @@ typealias Catcher = (Throwable) -> Boolean
 class ExceptionHandlerContext<T : Any, R> internal constructor(
     private val errorPresenter: ErrorPresenter<T>,
     private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
+    private val onCatch: ((Throwable) -> Unit)?,
     private val block: suspend () -> R
 ) {
     val catchersMap = mutableMapOf<KClass<*>, Catcher>()
@@ -39,11 +40,10 @@ class ExceptionHandlerContext<T : Any, R> internal constructor(
         return try {
             HandlerResult.Success(block())
         } catch (e: Throwable) {
+            onCatch?.invoke(e)
             val isHandled = catchersMap[e::class]?.invoke(e)
             if (isHandled == null || isHandled == false) {
-                if (!errorPresenter.sendErrorEvent(eventsDispatcher, e)) {
-                    throw e
-                }
+                errorPresenter.sendErrorEvent(eventsDispatcher, e)
             }
 
             HandlerResult.Failure(e)

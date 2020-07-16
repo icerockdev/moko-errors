@@ -90,8 +90,11 @@ mappers:
 
 ```kotlin
 ExceptionHandler<StringDesc>(
-    errorEventsDispatcher = eventsDispatcherInstance, // moko-mvvm EventsDispatcher instance
-    errorPresenter = errorsPresenterInstance // concrete ErrorPresenter implementation
+    errorEventsDispatcher = eventsDispatcherInstance,   // moko-mvvm EventsDispatcher instance
+    errorPresenter = errorsPresenterInstance,           // Concrete ErrorPresenter implementation
+    onCatch = {                                         // Optional global catcher
+        println("Got exception: $it")                   // E.g. here we can log all exceptions that are handled by ExceptionHandler
+    }
 )
 ```
 
@@ -101,10 +104,10 @@ And use it to safe requests in `ViewModel`:
 fun onSendRequest() {
     viewModelScope.launch {
         exceptionHandler.handle {
-            serverRequest() // Some dangerous code that can throw an exception
-        }.finally {
-            // Optional finally block
-        }.execute() // Executes handler block
+            serverRequest()     // Some dangerous code that can throw an exception
+        }.finally {             // Optional finally block
+            // Some code        
+        }.execute()             // Executes handler block
     }
 }
 ```
@@ -116,10 +119,10 @@ fun onSendRequest() {
     viewModelScope.launch {
         exceptionHandler.handle {
             serverRequest()
-        }.catch<IllegalArgumentException> { // Specifying a specific exception class
+        }.catch<IllegalArgumentException> {     // Specifying a specific exception class
             // Some custom handler code
-            false // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
-        }.execute()
+            false                               // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
+        }.execute()                             // Starts code execution in `handle` lambda
     }
 }
 ```
@@ -130,10 +133,10 @@ Registration of simple custom exceptions mapper:
 
 ```kotlin
 ExceptionMappersStorage
-    .register<IllegalArgumentException, StringDesc> { // Maps IllegalArgumentException instances to StringDesc
+    .register<IllegalArgumentException, StringDesc> {   // Maps IllegalArgumentException instances to StringDesc
         "Illegal argument was passed!".desc()
     }
-    .register<HttpException, Int> { // Maps HttpException instances to Int
+    .register<HttpException, Int> {                     // Maps HttpException instances to Int
         it.code
     }
 ```
@@ -141,9 +144,9 @@ ExceptionMappersStorage
 Registration of custom exception mapper with condition:
 
 ```kotlin
-ExceptionMappersStorage.condition<StringDesc>( // Registers exception mapper Throwable -> StringDesc
+ExceptionMappersStorage.condition<StringDesc>(              // Registers exception mapper Throwable -> StringDesc
     condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
-    mapper = { "Custom error happened!".desc() } // Mapper for Throwable that matches to the condition
+    mapper = { "Custom error happened!".desc() }            // Mapper for Throwable that matches to the condition
 )
 ```
 
@@ -168,7 +171,7 @@ signature from the `ExceptionMappersStorage` to an `ErrorPresenter`:
 
 ```kotlin
 val alertErrorPresenter = AlertErrorPresenter<StringDesc>(
-    exceptionMapper = ExceptionMappersStorage::exceptionToStringDesc,
+    exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
     alertTitle = "Error".desc()
 )
 ```
@@ -176,10 +179,10 @@ val alertErrorPresenter = AlertErrorPresenter<StringDesc>(
 Or you can create your own mapper using extensions:
 
 ```kotlin
-fun <E : Throwable> ExceptionMappersStorage.exceptionToInt(e: E): Int {
-    return find<E, Int>(e) // Tries to find mapper (Throwable) -> Int in the registry 
-        ?.invoke(e) // If it was found - invokes it
-        ?: 0 // Or default value
+fun <E : Throwable> ExceptionMappersStorage.throwableToInt(e: E): Int {
+    return find<E, Int>(e)  // Tries to find mapper (Throwable) -> Int in the registry 
+        ?.invoke(e)         // If it was found - invokes it
+        ?: 0                // Or default value
 }
 ```
 

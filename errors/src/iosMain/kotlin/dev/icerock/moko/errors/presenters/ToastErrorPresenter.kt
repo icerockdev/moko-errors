@@ -11,9 +11,9 @@ import platform.UIKit.UIViewController
  * In iOS there is no such thing as toast, so it shows [AlertErrorPresenter].
  */
 actual class ToastErrorPresenter actual constructor(
-    exceptionMapper: (Throwable) -> StringDesc,
+    override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: ToastDuration
-) : ErrorPresenter<StringDesc>(exceptionMapper) {
+) : ErrorPresenter<StringDesc>() {
 
     private val alertErrorPresenter = AlertErrorPresenter(exceptionMapper)
 

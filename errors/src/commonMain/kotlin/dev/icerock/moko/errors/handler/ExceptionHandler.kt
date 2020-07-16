@@ -10,13 +10,14 @@ import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
 class ExceptionHandler<T : Any>(
     private val errorPresenter: ErrorPresenter<T>,
-    private val errorEventsDispatcher: EventsDispatcher<ErrorEventListener<T>>
+    private val errorEventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
+    private val onCatch: ((Throwable) -> Unit)? = null
 ) : ExceptionHandlerBinder by ExceptionHandlerBinderImpl<T>(
     errorPresenter,
     errorEventsDispatcher
 ) {
 
     fun <R> handle(block: suspend () -> R): ExceptionHandlerContext<T, R> {
-        return ExceptionHandlerContext(errorPresenter, errorEventsDispatcher, block)
+        return ExceptionHandlerContext(errorPresenter, errorEventsDispatcher, onCatch, block)
     }
 }

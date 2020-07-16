@@ -7,7 +7,7 @@ package com.icerockdev.library
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.handler.ExceptionHandler
 import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
-import dev.icerock.moko.errors.mappers.exceptionToStringDesc
+import dev.icerock.moko.errors.mappers.throwableToStringDesc
 import dev.icerock.moko.errors.presenters.AlertErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import dev.icerock.moko.mvvm.livedata.LiveData
@@ -22,17 +22,21 @@ import kotlin.random.Random
 fun createSimpleViewModel(
     errorEventsDispatcher: EventsDispatcher<ErrorEventListener<StringDesc>>
 ) = SimpleViewModel(
-    exceptionHandler = ExceptionHandler<StringDesc>(
+    exceptionHandler = ExceptionHandler(
         errorEventsDispatcher = errorEventsDispatcher,
         errorPresenter = AlertErrorPresenter(
-            exceptionMapper = ExceptionMappersStorage::exceptionToStringDesc,
+            exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
             alertTitle = MR.strings.errorDialogTitle.desc()
-        )
+        ),
+        onCatch = {
+            // E.g. here we can log all exceptions that are handled by ExceptionHandler
+            println("Got exception: $it")
+        }
     )
 )
 
 class SimpleViewModel(
-    val exceptionHandler: ExceptionHandler<StringDesc>
+    val exceptionHandler: ExceptionHandler<*>
 ) : ViewModel() {
 
     private val _isLoading = MutableLiveData(false)

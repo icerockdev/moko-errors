@@ -11,9 +11,9 @@ import platform.UIKit.UIViewController
  * In iOS there is no such thing as snackbar, so it shows [AlertErrorPresenter].
  */
 actual class SnackBarErrorPresenter actual constructor(
-    exceptionMapper: (Throwable) -> StringDesc,
+    override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: SnackBarDuration
-) : ErrorPresenter<StringDesc>(exceptionMapper) {
+) : ErrorPresenter<StringDesc>() {
 
     private val alertErrorPresenter = AlertErrorPresenter(exceptionMapper)
 
