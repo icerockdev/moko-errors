@@ -6,6 +6,8 @@ package com.icerockdev.library
 
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.handler.ExceptionHandler
+import dev.icerock.moko.errors.handler.PresenterExceptionHandler
+import dev.icerock.moko.errors.handler.catch
 import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
 import dev.icerock.moko.errors.mappers.throwableToStringDesc
 import dev.icerock.moko.errors.presenters.AlertErrorPresenter
@@ -22,7 +24,7 @@ import kotlin.random.Random
 fun createSimpleViewModel(
     errorEventsDispatcher: EventsDispatcher<ErrorEventListener<StringDesc>>
 ) = SimpleViewModel(
-    exceptionHandler = ExceptionHandler(
+    exceptionHandler = PresenterExceptionHandler(
         errorEventsDispatcher = errorEventsDispatcher,
         errorPresenter = AlertErrorPresenter(
             exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
@@ -36,7 +38,7 @@ fun createSimpleViewModel(
 )
 
 class SimpleViewModel(
-    val exceptionHandler: ExceptionHandler<*>
+    val exceptionHandler: ExceptionHandler
 ) : ViewModel() {
 
     private val _isLoading = MutableLiveData(false)
