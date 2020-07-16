@@ -15,12 +15,16 @@ internal typealias ExceptionMapper = (Throwable) -> Any
 @ThreadLocal
 object ExceptionMappersStorage {
 
-    var unknownErrorText: StringDesc = MR.strings.moko_errors_unknownError.desc()
+    private val fallbackValuesMap: MutableMap<KClass<out Any>, Any> = mutableMapOf()
 
     private val mappersMap: MutableMap<KClass<out Any>, MutableMap<KClass<out Throwable>, ExceptionMapper>> =
         mutableMapOf()
     private val conditionMappers: MutableMap<KClass<out Any>, MutableList<ConditionPair>> =
         mutableMapOf()
+
+    init {
+        fallbackValuesMap[StringDesc::class] = MR.strings.moko_errors_unknownError.desc()
+    }
 
     fun <T : Any, E : Throwable> register(
         resultClass: KClass<T>,
@@ -109,12 +113,22 @@ object ExceptionMappersStorage {
         exceptionClass = throwable::class
     )
 
-    fun setUnknownErrorText(text: StringDesc): ExceptionMappersStorage {
-        unknownErrorText = text
-        return this
+    fun <T : Any> setFallbackValue(clazz: KClass<T>, value: T): ExceptionMappersStorage {
+        fallbackValuesMap[clazz] = value
+        return ExceptionMappersStorage
     }
+
+    inline fun <reified T : Any> setFallbackValue(value: T): ExceptionMappersStorage =
+        setFallbackValue(T::class, value)
+
+    fun <T : Any> getFallbackValue(clazz: KClass<T>): T {
+        return fallbackValuesMap[clazz] as? T
+            ?: throw IllegalArgumentException("There is no fallback value for class $clazz")
+    }
+
+    inline fun <reified T : Any> getFallbackValue(): T = getFallbackValue(T::class)
 }
 
 fun <E : Throwable> ExceptionMappersStorage.throwableToStringDesc(e: E): StringDesc {
-    return find<E, StringDesc>(e)?.invoke(e) ?: unknownErrorText
+    return find<E, StringDesc>(e)?.invoke(e) ?: getFallbackValue()
 }
