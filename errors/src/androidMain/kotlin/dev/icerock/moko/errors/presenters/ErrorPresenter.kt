@@ -7,5 +7,5 @@ package dev.icerock.moko.errors.presenters
 import androidx.fragment.app.FragmentActivity
 
 actual abstract class ErrorPresenter<T : Any> : ErrorPresenterBase<T>() {
-    abstract fun show(exception: Throwable, activity: FragmentActivity, data: T)
+    abstract fun show(throwable: Throwable, activity: FragmentActivity, data: T)
 }

@@ -14,7 +14,7 @@ actual class AlertErrorPresenter actual constructor(
     private val positiveButtonText: StringDesc
 ) : ErrorPresenter<StringDesc>() {
 
-    override fun show(exception: Throwable, activity: FragmentActivity, data: StringDesc) {
+    override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         AlertDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(

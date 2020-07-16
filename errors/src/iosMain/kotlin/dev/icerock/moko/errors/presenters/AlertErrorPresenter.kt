@@ -17,10 +17,10 @@ actual class AlertErrorPresenter actual constructor(
     private val positiveButtonText: StringDesc
 ) : ErrorPresenter<StringDesc>() {
 
-    override fun show(exception: Throwable, viewController: UIViewController, data: StringDesc) {
+    override fun show(throwable: Throwable, viewController: UIViewController, data: StringDesc) {
         val alert = UIAlertController.alertControllerWithTitle(
             title = alertTitle.localized(),
-            message = exceptionMapper(exception).localized(),
+            message = exceptionMapper(throwable).localized(),
             preferredStyle = UIAlertControllerStyleAlert
         )
         alert.addAction(

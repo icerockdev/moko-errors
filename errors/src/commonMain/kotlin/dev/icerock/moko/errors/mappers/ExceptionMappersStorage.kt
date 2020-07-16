@@ -73,40 +73,40 @@ object ExceptionMappersStorage {
     )
 
     /**
-     * Tries to find mapper for [exception] instance. First, a mapper with condition is
+     * Tries to find mapper for [throwable] instance. First, a mapper with condition is
      * looked for. If mapper with condition was not found, then a simple mapper is looked for. If
      * the mapper was not found, it will return null.
-     * If there is no mapper for the [exception] of class [E] and [E] does't inherits
+     * If there is no mapper for the [throwable] of class [E] and [E] does't inherits
      * [kotlin.Exception], then exception will be rethrown.
      */
     fun <E : Throwable, T : Any> find(
         resultClass: KClass<T>,
-        exception: E,
+        throwable: E,
         exceptionClass: KClass<out E>
     ): ((E) -> T)? {
         val mapper = conditionMappers.get(resultClass)
-            ?.find { it.condition(exception) }
+            ?.find { it.condition(throwable) }
             ?.mapper as? ((E) -> T)
             ?: mappersMap.get(resultClass)?.get(exceptionClass) as? ((E) -> T)
 
-        return if (mapper == null && exception !is Exception) {
-            throw exception
+        return if (mapper == null && throwable !is Exception) {
+            throw throwable
         } else {
             mapper
         }
     }
 
     /**
-     * Tries to find mapper (E) -> T by [exception] instance. First, a mapper with condition is
+     * Tries to find mapper (E) -> T by [throwable] instance. First, a mapper with condition is
      * looked for. If mapper with condition was not found, then a simple mapper is looked for. If
      * the mapper was not found, it will return null.
-     * If there is no mapper for the [exception] of class [E] and [E] does't inherits
+     * If there is no mapper for the [throwable] of class [E] and [E] does't inherits
      * [kotlin.Exception], then exception will be rethrown.
      */
-    inline fun <E : Throwable, reified T : Any> find(exception: E): ((E) -> T)? = find(
+    inline fun <E : Throwable, reified T : Any> find(throwable: E): ((E) -> T)? = find(
         resultClass = T::class,
-        exception = exception,
-        exceptionClass = exception::class
+        throwable = throwable,
+        exceptionClass = throwable::class
     )
 
     fun setUnknownErrorText(text: StringDesc): ExceptionMappersStorage {

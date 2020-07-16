@@ -13,10 +13,10 @@ actual class ToastErrorPresenter actual constructor(
     private val duration: ToastDuration
 ) : ErrorPresenter<StringDesc>() {
 
-    override fun show(exception: Throwable, activity: FragmentActivity, data: StringDesc) {
+    override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         Toast.makeText(
             activity,
-            exceptionMapper(exception).toString(activity),
+            exceptionMapper(throwable).toString(activity),
             duration.toAndroidCode()
         ).show()
     }

@@ -26,8 +26,8 @@ actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
         private val activity: FragmentActivity,
         private val errorPresenter: ErrorPresenter<T>
     ) : ErrorEventListener<T> {
-        override fun showError(exception: Throwable, data: T) {
-            errorPresenter.show(exception, activity, data)
+        override fun showError(throwable: Throwable, data: T) {
+            errorPresenter.show(throwable, activity, data)
         }
     }
 }

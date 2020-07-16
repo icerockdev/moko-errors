@@ -17,6 +17,6 @@ actual class ToastErrorPresenter actual constructor(
 
     private val alertErrorPresenter = AlertErrorPresenter(exceptionMapper)
 
-    override fun show(exception: Throwable, viewController: UIViewController, data: StringDesc) =
-        alertErrorPresenter.show(exception, viewController, data)
+    override fun show(throwable: Throwable, viewController: UIViewController, data: StringDesc) =
+        alertErrorPresenter.show(throwable, viewController, data)
 }

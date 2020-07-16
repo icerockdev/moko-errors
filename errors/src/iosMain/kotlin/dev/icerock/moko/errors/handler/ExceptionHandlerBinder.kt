@@ -19,8 +19,8 @@ actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
 ) : ExceptionHandlerBinder {
     override fun bind(viewController: UIViewController) {
         eventsDispatcher.listener = object : ErrorEventListener<T> {
-            override fun showError(exception: Throwable, data: T) {
-                errorPresenter.show(exception, viewController, data)
+            override fun showError(throwable: Throwable, data: T) {
+                errorPresenter.show(throwable, viewController, data)
             }
         }
     }

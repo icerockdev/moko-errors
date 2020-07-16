@@ -5,5 +5,5 @@
 package dev.icerock.moko.errors
 
 interface ErrorEventListener<T> {
-    fun showError(exception: Throwable, data: T)
+    fun showError(throwable: Throwable, data: T)
 }

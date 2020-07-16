@@ -14,7 +14,7 @@ actual class SnackBarErrorPresenter actual constructor(
     private val duration: SnackBarDuration
 ) : ErrorPresenter<StringDesc>() {
 
-    override fun show(exception: Throwable, activity: FragmentActivity, data: StringDesc) {
+    override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         val rootView = activity.findViewById<View>(android.R.id.content)?.rootView
             ?: activity.window?.decorView?.findViewById<View>(android.R.id.content)
         if (rootView != null) {
