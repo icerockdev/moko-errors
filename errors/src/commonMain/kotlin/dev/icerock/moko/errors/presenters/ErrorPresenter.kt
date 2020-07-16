@@ -9,7 +9,6 @@ import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
 expect abstract class ErrorPresenter<T : Any> : ErrorPresenterBase<T>
 
-@Suppress("UnnecessaryAbstractClass")
 abstract class ErrorPresenterBase<T : Any> {
 
     protected abstract val exceptionMapper: (Throwable) -> T
@@ -18,6 +17,7 @@ abstract class ErrorPresenterBase<T : Any> {
         eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
         throwable: Throwable
     ) {
-        eventsDispatcher.dispatchEvent { showError(throwable, exceptionMapper(throwable)) }
+        val data = exceptionMapper(throwable)
+        eventsDispatcher.dispatchEvent { showError(throwable, data) }
     }
 }

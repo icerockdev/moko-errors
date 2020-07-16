@@ -170,7 +170,7 @@ After initializing the registry, you can pass exception mappers of `(Throwable) 
 signature from the `ExceptionMappersStorage` to an `ErrorPresenter`:
 
 ```kotlin
-val alertErrorPresenter = AlertErrorPresenter<StringDesc>(
+val alertErrorPresenter = AlertErrorPresenter(
     exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
     alertTitle = "Error".desc()
 )

@@ -20,7 +20,7 @@ actual class AlertErrorPresenter actual constructor(
     override fun show(throwable: Throwable, viewController: UIViewController, data: StringDesc) {
         val alert = UIAlertController.alertControllerWithTitle(
             title = alertTitle.localized(),
-            message = exceptionMapper(throwable).localized(),
+            message = data.localized(),
             preferredStyle = UIAlertControllerStyleAlert
         )
         alert.addAction(

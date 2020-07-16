@@ -16,7 +16,7 @@ actual class ToastErrorPresenter actual constructor(
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         Toast.makeText(
             activity,
-            exceptionMapper(throwable).toString(activity),
+            data.toString(activity),
             duration.toAndroidCode()
         ).show()
     }
