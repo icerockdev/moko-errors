@@ -4,7 +4,6 @@
 
 package dev.icerock.moko.errors.mappers
 
-data class ConditionPair(
-    val condition: (Throwable) -> Boolean,
-    val mapper: ExceptionMapper
-)
+class IsErrorInheritorException(
+    val exception: Error
+) : Error()

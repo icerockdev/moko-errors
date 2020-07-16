@@ -8,14 +8,16 @@ package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.HandlerResult
+import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlin.reflect.KClass
 
 typealias Catcher = (Throwable) -> Boolean
 
-class ExceptionHandlerContext<T> internal constructor(
-    private val eventsDispatcher: EventsDispatcher<ErrorEventListener>,
-    private val block: suspend () -> T
+class ExceptionHandlerContext<T : Any, R> internal constructor(
+    private val errorPresenter: ErrorPresenter<T>,
+    private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
+    private val block: suspend () -> R
 ) {
     val catchersMap = mutableMapOf<KClass<*>, Catcher>()
 
@@ -23,24 +25,24 @@ class ExceptionHandlerContext<T> internal constructor(
 
     inline fun <reified E : Throwable> catch(
         noinline catcher: (E) -> Boolean
-    ): ExceptionHandlerContext<T> {
+    ): ExceptionHandlerContext<T, R> {
         catchersMap[E::class] = catcher as Catcher
         return this
     }
 
-    fun finally(block: () -> Unit): ExceptionHandlerContext<T> {
+    fun finally(block: () -> Unit): ExceptionHandlerContext<T, R> {
         finallyBlock = block
         return this
     }
 
-    suspend fun execute(): HandlerResult<T, Throwable> {
+    suspend fun execute(): HandlerResult<R, Throwable> {
         return try {
             HandlerResult.Success(block())
         } catch (e: Throwable) {
             val isHandled = catchersMap[e::class]?.invoke(e)
             if (isHandled == null || isHandled == false) {
-                eventsDispatcher.dispatchEvent {
-                    showError(e)
+                if (!errorPresenter.sendErrorEvent(eventsDispatcher, e)) {
+                    throw e
                 }
             }
 

@@ -6,32 +6,33 @@ package com.icerockdev.library
 
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.handler.ExceptionHandler
-import dev.icerock.moko.errors.presenters.AlertErrorPresenter
 import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
-import dev.icerock.moko.errors.mappers.throwableToStringDesc
+import dev.icerock.moko.errors.mappers.exceptionToStringDesc
+import dev.icerock.moko.errors.presenters.AlertErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-fun createSimpleViewModel(errorEventsDispatcher: EventsDispatcher<ErrorEventListener>): SimpleViewModel {
-    return SimpleViewModel(
-        exceptionHandler = ExceptionHandler(
-            errorEventsDispatcher = errorEventsDispatcher,
-            errorPresenter = AlertErrorPresenter(
-                exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
-                alertTitle = MR.strings.errorDialogTitle.desc()
-            )
+fun createSimpleViewModel(
+    errorEventsDispatcher: EventsDispatcher<ErrorEventListener<StringDesc>>
+) = SimpleViewModel(
+    exceptionHandler = ExceptionHandler<StringDesc>(
+        errorEventsDispatcher = errorEventsDispatcher,
+        errorPresenter = AlertErrorPresenter(
+            exceptionMapper = ExceptionMappersStorage::exceptionToStringDesc,
+            alertTitle = MR.strings.errorDialogTitle.desc()
         )
     )
-}
+)
 
 class SimpleViewModel(
-    val exceptionHandler: ExceptionHandler
+    val exceptionHandler: ExceptionHandler<StringDesc>
 ) : ViewModel() {
 
     private val _isLoading = MutableLiveData(false)
@@ -42,6 +43,9 @@ class SimpleViewModel(
         viewModelScope.launch {
             exceptionHandler.handle {
                 serverRequest()
+            }.catch<CustomException> {
+                println("Got CustomException!")
+                false
             }.finally {
                 _isLoading.value = false
             }.execute()

@@ -9,6 +9,8 @@ object Versions {
         const val minSdk = 16
     }
 
+    const val mokoErrors = "0.2.0"
+
     const val kotlin = "1.3.72"
     private const val androidArch = "2.0.0"
     private const val mokoResources = "0.11.0"
@@ -30,7 +32,7 @@ object Versions {
 
         object MultiPlatform {
             const val coroutines = "1.3.4"
-            const val mokoErrors = "0.1.0"
+            const val mokoErrors = Versions.mokoErrors
             const val mokoMvvm = "0.7.0"
             const val mokoResources = Versions.mokoResources
         }

@@ -6,16 +6,15 @@ package dev.icerock.moko.errors.presenters
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import dev.icerock.moko.errors.ErrorPresenter
 import dev.icerock.moko.resources.desc.StringDesc
 
 actual class AlertErrorPresenter actual constructor(
-    private val exceptionMapper: (Throwable) -> StringDesc,
+    exceptionMapper: (Throwable) -> StringDesc,
     private val alertTitle: StringDesc,
     private val positiveButtonText: StringDesc
-) : ErrorPresenter {
+) : ErrorPresenter<StringDesc>(exceptionMapper) {
 
-    override fun show(exception: Throwable, activity: FragmentActivity) {
+    override fun show(exception: Throwable, activity: FragmentActivity, data: StringDesc) {
         AlertDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(
@@ -23,7 +22,7 @@ actual class AlertErrorPresenter actual constructor(
                     AlertDialogFragment.DialogSettings(
                         title = alertTitle.toString(activity),
                         positiveButtonText = positiveButtonText.toString(activity),
-                        messageText = exceptionMapper(exception).toString(activity)
+                        messageText = data.toString(activity)
                     )
                 )
             }

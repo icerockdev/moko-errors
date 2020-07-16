@@ -35,6 +35,7 @@ on the platforms. Converts the exception class to an error object to display. Th
 ## Versions
 - kotlin 1.3.72
   - 0.1.0
+  - 0.2.0
 
 ## Installation
 root build.gradle  
@@ -49,7 +50,7 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.1.0")
+    commonMainApi("dev.icerock.moko:errors:0.2.0")
 }
 ```
 
@@ -61,7 +62,7 @@ E.g. declare `ExceptionHandler` property in some `ViewModel` class:
 
 ```kotlin
 class SimpleViewModel(
-    val exceptionHandler: ExceptionHandler
+    val exceptionHandler: ExceptionHandler<StringDesc>
 ) : ViewModel() {
     // ...
 }
@@ -84,10 +85,11 @@ On iOS in a `ViewController`:
 viewModel.exceptionHandler.bind(viewController: self)
 ```
 
-Creating instances of `ExceptionHandler` class:
+Creating instances of `ExceptionHandler` class which works with `(Throwable) -> StringDesc`
+mappers:
 
 ```kotlin
-ExceptionHandler(
+ExceptionHandler<StringDesc>(
     errorEventsDispatcher = eventsDispatcherInstance, // moko-mvvm EventsDispatcher instance
     errorPresenter = errorsPresenterInstance // concrete ErrorPresenter implementation
 )
@@ -129,7 +131,7 @@ Registration of simple custom exceptions mapper:
 ```kotlin
 ExceptionMappersStorage
     .register<IllegalArgumentException, StringDesc> { // Maps IllegalArgumentException instances to StringDesc
-        MR.strings.illegalArgumentText.desc()
+        "Illegal argument was passed!".desc()
     }
     .register<HttpException, Int> { // Maps HttpException instances to Int
         it.code
@@ -141,7 +143,7 @@ Registration of custom exception mapper with condition:
 ```kotlin
 ExceptionMappersStorage.condition<StringDesc>( // Registers exception mapper Throwable -> StringDesc
     condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
-    mapper = { MR.strings.myExceptionText.desc() } // Mapper for Throwable that matches to the condition
+    mapper = { "Custom error happened!".desc() } // Mapper for Throwable that matches to the condition
 )
 ```
 
@@ -151,10 +153,10 @@ The registration can be done in the form of an endless chain:
 ExceptionMappersStorage
     .condition<StringDesc>(
         condition = { it is CustomException && it.code == 10 },
-        mapper = { MR.strings.myExceptionText.desc() }
+        mapper = { "Custom error happened!".desc() }
     )
     .register<IllegalArgumentException, StringDesc> {
-        MR.strings.illegalArgumentText.desc()
+        "Illegal argument was passed!".desc()
     }
     .register<HttpException, Int> {
         it.code
@@ -165,8 +167,8 @@ After initializing the registry, you can pass exception mappers of `(Throwable) 
 signature from the `ExceptionMappersStorage` to an `ErrorPresenter`:
 
 ```kotlin
-val alertErrorPresenter = AlertErrorPresenter(
-    exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
+val alertErrorPresenter = AlertErrorPresenter<StringDesc>(
+    exceptionMapper = ExceptionMappersStorage::exceptionToStringDesc,
     alertTitle = "Error".desc()
 )
 ```
@@ -174,8 +176,8 @@ val alertErrorPresenter = AlertErrorPresenter(
 Or you can create your own mapper using extensions:
 
 ```kotlin
-fun <E : Throwable> ExceptionMappersStorage.throwableToInt(e: E): Int {
-    return find<Int, E>(e) // Tries to find mapper (Throwable) -> Int in the registry 
+fun <E : Throwable> ExceptionMappersStorage.exceptionToInt(e: E): Int {
+    return find<E, Int>(e) // Tries to find mapper (Throwable) -> Int in the registry 
         ?.invoke(e) // If it was found - invokes it
         ?: 0 // Or default value
 }

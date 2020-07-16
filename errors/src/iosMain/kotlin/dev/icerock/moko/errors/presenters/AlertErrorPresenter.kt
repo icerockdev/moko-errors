@@ -4,7 +4,6 @@
 
 package dev.icerock.moko.errors.presenters
 
-import dev.icerock.moko.errors.ErrorPresenter
 import dev.icerock.moko.resources.desc.StringDesc
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertActionStyleDefault
@@ -13,12 +12,12 @@ import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIViewController
 
 actual class AlertErrorPresenter actual constructor(
-    private val exceptionMapper: (Throwable) -> StringDesc,
+    exceptionMapper: (Throwable) -> StringDesc,
     private val alertTitle: StringDesc,
     private val positiveButtonText: StringDesc
-) : ErrorPresenter {
+) : ErrorPresenter<StringDesc>(exceptionMapper) {
 
-    override fun show(exception: Throwable, viewController: UIViewController) {
+    override fun show(exception: Throwable, viewController: UIViewController, data: StringDesc) {
         val alert = UIAlertController.alertControllerWithTitle(
             title = alertTitle.localized(),
             message = exceptionMapper(exception).localized(),

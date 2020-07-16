@@ -6,13 +6,12 @@
 
 package dev.icerock.moko.errors.presenters
 
-import dev.icerock.moko.errors.ErrorPresenter
 import dev.icerock.moko.resources.desc.StringDesc
 
 expect class SnackBarErrorPresenter(
     exceptionMapper: (Throwable) -> StringDesc,
     duration: SnackBarDuration = SnackBarDuration.INDEFINITE
-) : ErrorPresenter
+) : ErrorPresenter<StringDesc>
 
 enum class SnackBarDuration {
     INDEFINITE,

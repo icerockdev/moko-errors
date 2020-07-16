@@ -4,15 +4,19 @@
 
 package dev.icerock.moko.errors.presenters
 
-import dev.icerock.moko.errors.ErrorPresenter
-import dev.icerock.moko.errors.MR
 import dev.icerock.moko.resources.desc.StringDesc
-import dev.icerock.moko.resources.desc.desc
+import platform.UIKit.UIViewController
 
+/**
+ * In iOS there is no such thing as snackbar, so it shows [AlertErrorPresenter].
+ */
 actual class SnackBarErrorPresenter actual constructor(
-    private val exceptionMapper: (Throwable) -> StringDesc,
+    exceptionMapper: (Throwable) -> StringDesc,
     private val duration: SnackBarDuration
-) : ErrorPresenter by AlertErrorPresenter(
-    exceptionMapper = exceptionMapper,
-    alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc()
-)
+) : ErrorPresenter<StringDesc>(exceptionMapper) {
+
+    private val alertErrorPresenter = AlertErrorPresenter(exceptionMapper)
+
+    override fun show(exception: Throwable, viewController: UIViewController, data: StringDesc) =
+        alertErrorPresenter.show(exception, viewController, data)
+}
