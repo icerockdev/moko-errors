@@ -7,7 +7,7 @@ package dev.icerock.moko.errors.presenters
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
-expect abstract class ErrorPresenter<T : Any>() : ErrorPresenterBase<T>
+expect abstract class ErrorPresenter<T : Any> : ErrorPresenterBase<T>
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class ErrorPresenterBase<T : Any> {
