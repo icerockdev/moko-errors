@@ -14,7 +14,7 @@ class TestViewController: UIViewController {
         
         ExceptionStorageKt.doInitExceptionStorage()
         
-        viewModel = SimpleViewModelKt.createSimpleViewModel(errorEventsDispatcher: EventsDispatcher())
+        viewModel = SimpleViewModelKt.createSimpleViewModel()
         viewModel.exceptionHandler.bind(viewController: self)
     }
     

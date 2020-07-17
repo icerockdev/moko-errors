@@ -10,20 +10,25 @@ import dev.icerock.moko.resources.desc.desc
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
-typealias BasicException = Throwable
-internal typealias ExceptionMapper = (BasicException) -> Any
+internal typealias ThrowableMapper = (Throwable) -> Any
 
+@Suppress("TooManyFunctions")
 @ThreadLocal
 object ExceptionMappersStorage {
 
-    var unknownErrorText: StringDesc = MR.strings.moko_errors_unknownError.desc()
+    private val fallbackValuesMap: MutableMap<KClass<out Any>, Any> = mutableMapOf(
+        StringDesc::class to MR.strings.moko_errors_unknownError.desc()
+    )
 
-    private val mappersMap: MutableMap<KClass<out Any>, MutableMap<KClass<out BasicException>, ExceptionMapper>> =
+    private val mappersMap: MutableMap<KClass<out Any>, MutableMap<KClass<out Throwable>, ThrowableMapper>> =
         mutableMapOf()
     private val conditionMappers: MutableMap<KClass<out Any>, MutableList<ConditionPair>> =
         mutableMapOf()
 
-    fun <T : Any, E : BasicException> register(
+    /**
+     * Register simple mapper (E) -> T.
+     */
+    fun <T : Any, E : Throwable> register(
         resultClass: KClass<T>,
         exceptionClass: KClass<E>,
         mapper: (E) -> T
@@ -31,10 +36,13 @@ object ExceptionMappersStorage {
         if (!mappersMap.containsKey(resultClass)) {
             mappersMap[resultClass] = mutableMapOf()
         }
-        mappersMap.get(resultClass)?.put(exceptionClass, mapper as ExceptionMapper)
+        mappersMap.get(resultClass)?.put(exceptionClass, mapper as ThrowableMapper)
         return this
     }
 
+    /**
+     * Register mapper (E) -> T with condition (Throwable) -> Boolean.
+     */
     fun <T : Any> register(
         resultClass: KClass<T>,
         conditionPair: ConditionPair
@@ -49,7 +57,7 @@ object ExceptionMappersStorage {
     /**
      * Register simple mapper (E) -> T.
      */
-    inline fun <reified E : BasicException, reified T : Any> register(
+    inline fun <reified E : Throwable, reified T : Any> register(
         noinline mapper: (E) -> T
     ): ExceptionMappersStorage {
         return register(
@@ -63,45 +71,100 @@ object ExceptionMappersStorage {
      * Registers mapper (Throwable) -> T with specific condition (Throwable) -> Boolean.
      */
     inline fun <reified T : Any> condition(
-        noinline condition: (BasicException) -> Boolean,
-        noinline mapper: (BasicException) -> T
-    ): ExceptionMappersStorage =
-        register(
-            resultClass = T::class,
-            conditionPair = ConditionPair(
-                condition,
-                mapper as ExceptionMapper
-            )
+        noinline condition: (Throwable) -> Boolean,
+        noinline mapper: (Throwable) -> T
+    ): ExceptionMappersStorage = register(
+        resultClass = T::class,
+        conditionPair = ConditionPair(
+            condition,
+            mapper as ThrowableMapper
         )
+    )
 
-    fun <E : BasicException, T : Any> find(
+    /**
+     * Tries to find mapper for [throwable] instance. First, a mapper with condition is
+     * looked for. If mapper with condition was not found, then a simple mapper is looked for. If
+     * the mapper was not found, it will return null.
+     * If there is no mapper for the [throwable] of class [E] and [E] does't inherits
+     * [kotlin.Exception], then exception will be rethrown.
+     */
+    fun <E : Throwable, T : Any> find(
         resultClass: KClass<T>,
-        exception: E,
+        throwable: E,
         exceptionClass: KClass<out E>
     ): ((E) -> T)? {
-        return conditionMappers.get(resultClass)
-            ?.find { it.condition(exception) }
+        val mapper = conditionMappers.get(resultClass)
+            ?.find { it.condition(throwable) }
             ?.mapper as? ((E) -> T)
             ?: mappersMap.get(resultClass)?.get(exceptionClass) as? ((E) -> T)
+
+        return if (mapper == null && throwable !is Exception) {
+            throw throwable
+        } else {
+            mapper
+        }
     }
 
     /**
-     * Tries to find mapper (E) -> T. First, a mapper with a condition is looked for. If this was
-     * not found, then a simple mapper is looked for.
+     * Tries to find mapper (E) -> T by [throwable] instance. First, a mapper with condition is
+     * looked for. If mapper with condition was not found, then a simple mapper is looked for. If
+     * the mapper was not found, it will return null.
+     * If there is no mapper for the [throwable] of class [E] and [E] does't inherits
+     * [kotlin.Exception], then exception will be rethrown.
      */
-    inline fun <E : BasicException, reified T : Any> find(exception: E): ((E) -> T)? =
-        find(
-            T::class,
-            exception,
-            exception::class
-        )
+    inline fun <E : Throwable, reified T : Any> find(throwable: E): ((E) -> T)? = find(
+        resultClass = T::class,
+        throwable = throwable,
+        exceptionClass = throwable::class
+    )
 
-    fun setUnknownErrorText(text: StringDesc): ExceptionMappersStorage {
-        unknownErrorText = text
-        return this
+    /**
+     * Sets fallback (default) value for [T] errors type.
+     */
+    fun <T : Any> setFallbackValue(clazz: KClass<T>, value: T): ExceptionMappersStorage {
+        fallbackValuesMap[clazz] = value
+        return ExceptionMappersStorage
     }
-}
 
-fun <E : BasicException> ExceptionMappersStorage.throwableToStringDesc(e: E): StringDesc {
-    return find<E, StringDesc>(e)?.invoke(e) ?: unknownErrorText
+    /**
+     * Sets fallback (default) value for [T] errors type.
+     */
+    inline fun <reified T : Any> setFallbackValue(value: T): ExceptionMappersStorage =
+        setFallbackValue(T::class, value)
+
+    /**
+     * Returns fallback (default) value for [T] errors type.
+     * If there is no default value for the class [T], then [FallbackValueNotFoundException]
+     * exception will be thrown.
+     */
+    fun <T : Any> getFallbackValue(clazz: KClass<T>): T {
+        return fallbackValuesMap[clazz] as? T
+            ?: throw FallbackValueNotFoundException(clazz)
+    }
+
+    /**
+     * Returns fallback (default) value for [T] errors type.
+     * If there is no default value for the class [T], then [FallbackValueNotFoundException]
+     * exception will be thrown.
+     */
+    inline fun <reified T : Any> getFallbackValue(): T = getFallbackValue(T::class)
+
+    /**
+     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
+     * class [T].
+     */
+    fun <E : Throwable, T : Any> throwableMapper(clazz: KClass<T>): (e: E) -> T {
+        val fallback = getFallbackValue(clazz)
+        return { e ->
+            find(clazz, e, e::class)?.invoke(e) ?: fallback
+        }
+    }
+
+    /**
+     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
+     * class [T].
+     */
+    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
+        return throwableMapper(T::class)
+    }
 }

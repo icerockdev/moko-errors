@@ -25,7 +25,8 @@ to error classes required for **ErrorPresenter** objects.
 on the platforms. Converts the exception class to an error object to display. There are several
 `ErrorPresenter` implementations: `AlertErrorPresenter` - displays errors text in alert dialogs,
 `ToastErrorPresenter` - displays errors text in toasts for Android and in alert dialog for iOS,
-`SnackBarErrorPresenter` - displays errors text in snackbar for Android and in alert dialog for iOS.
+`SnackBarErrorPresenter` - displays errors text in snackbar for Android and in alert dialog for iOS,
+`SelectorErrorPresenter` - for selecting error presenter by some custom condition.
 
 ## Requirements
 - Gradle version 5.6.4+
@@ -35,6 +36,7 @@ on the platforms. Converts the exception class to an error object to display. Th
 ## Versions
 - kotlin 1.3.72
   - 0.1.0
+  - 0.2.0
 
 ## Installation
 root build.gradle  
@@ -49,11 +51,71 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.1.0")
+    commonMainApi("dev.icerock.moko:errors:0.2.0")
 }
 ```
 
 ## Usage
+
+#### ExceptionMappersStorage
+
+Registration of simple custom exceptions mapper in the singleton storage:
+
+```kotlin
+ExceptionMappersStorage
+    .register<IllegalArgumentException, StringDesc> {   // Will map all IllegalArgumentException instances to StringDesc
+        "Illegal argument was passed!".desc()
+    }
+    .register<HttpException, Int> {                     // Will map all HttpException instances to Int
+        it.code
+    }
+```
+
+Registration of custom exception mapper with condition:
+
+```kotlin
+ExceptionMappersStorage.condition<StringDesc>(              // Registers exception mapper Throwable -> StringDesc
+    condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
+    mapper = { "Custom error happened!".desc() }            // Mapper for Throwable that matches to the condition
+)
+```
+
+For every error type you should to set fallback (default) value using method `setFallbackValue`  
+(except `StringDesc` class which already has default value).
+
+```kotlin
+ExceptionMappersStorage
+    .setFallbackValue<Int>(520) // Sets for Int error type default value as 520
+
+// Creates new mapper that for any unregistered exception will return the fallback value - 520
+val throwableToIntMapper: (Throwable) -> Int = ExceptionMappersStorage.throwableMapper()
+```
+
+Using factory method `throwableMapper` you can create exception mappers automaticlly:
+
+```kotlin
+val throwableToIntMapper: (Throwable) -> Int = ExceptionMappersStorage.throwableMapper()
+```
+
+If a default value is not found when creating a mapper using factory method `throwableMapper`, an 
+exception will be thrown `FallbackValueNotFoundException`   
+
+The registration can be done in the form of an endless chain:
+
+```kotlin
+ExceptionMappersStorage
+    .condition<StringDesc>(
+        condition = { it is CustomException && it.code == 10 },
+        mapper = { "Custom error happened!".desc() }
+    )
+    .register<IllegalArgumentException, StringDesc> {
+        "Illegal argument was passed!".desc()
+    }
+    .register<HttpException, Int> {
+        it.code
+    }
+    .setFallbackValue<Int>(520)
+```
 
 #### ExceptionHandler
 
@@ -84,12 +146,15 @@ On iOS in a `ViewController`:
 viewModel.exceptionHandler.bind(viewController: self)
 ```
 
-Creating instances of `ExceptionHandler` class:
+Creating instances of `ExceptionHandler` class which uses `(Throwable) -> StringDesc` mappers:
 
 ```kotlin
-ExceptionHandler(
-    errorEventsDispatcher = eventsDispatcherInstance, // moko-mvvm EventsDispatcher instance
-    errorPresenter = errorsPresenterInstance // concrete ErrorPresenter implementation
+ExceptionHandler<StringDesc>(
+    errorPresenter = errorsPresenterInstance,                    // Concrete ErrorPresenter implementation
+    exceptionMapper = ExceptionMappersStorage.throwableMapper(), // Create mapper (Throwable) -> StringDesc from ExceptionMappersStorage
+    onCatch = {                                                  // Optional global catcher
+        println("Got exception: $it")                            // E.g. here we can log all exceptions that are handled by ExceptionHandler
+    }
 )
 ```
 
@@ -99,10 +164,10 @@ And use it to safe requests in `ViewModel`:
 fun onSendRequest() {
     viewModelScope.launch {
         exceptionHandler.handle {
-            serverRequest() // Some dangerous code that can throw an exception
-        }.finally {
-            // Optional finally block
-        }.execute() // Executes handler block
+            serverRequest()     // Some dangerous code that can throw an exception
+        }.finally {             // Optional finally block
+            // Some code        
+        }.execute()             // Starts code execution in `handle` lambda
     }
 }
 ```
@@ -114,71 +179,54 @@ fun onSendRequest() {
     viewModelScope.launch {
         exceptionHandler.handle {
             serverRequest()
-        }.catch<IllegalArgumentException> { // Specifying a specific exception class
+        }.catch<IllegalArgumentException> {     // Specifying a specific exception class
             // Some custom handler code
-            false // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
-        }.execute()
+            false                               // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
+        }.execute()                             // Starts code execution in `handle` lambda
     }
 }
 ```
 
-#### ExceptionMappersStorage
+#### ErrorPresenter
 
-Registration of simple custom exceptions mapper:
+There are `ErrorPresenter` interface implementations:
+* `AlertErrorPresenter` - displays errors text in alert dialogs;
+* `ToastErrorPresenter` - displays errors text in toasts for Android (for iOS shows alert dialog);
+* `SnackBarErrorPresenter` - displays errors text in snackbar for Android (for iOS shows alert dialog);
+* `SelectorErrorPresenter` - for selecting error presenter by some custom condition.
 
-```kotlin
-ExceptionMappersStorage
-    .register<IllegalArgumentException, StringDesc> { // Maps IllegalArgumentException instances to StringDesc
-        MR.strings.illegalArgumentText.desc()
-    }
-    .register<HttpException, Int> { // Maps HttpException instances to Int
-        it.code
-    }
-```
-
-Registration of custom exception mapper with condition:
-
-```kotlin
-ExceptionMappersStorage.condition<StringDesc>( // Registers exception mapper Throwable -> StringDesc
-    condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
-    mapper = { MR.strings.myExceptionText.desc() } // Mapper for Throwable that matches to the condition
-)
-```
-
-The registration can be done in the form of an endless chain:
-
-```kotlin
-ExceptionMappersStorage
-    .condition<StringDesc>(
-        condition = { it is CustomException && it.code == 10 },
-        mapper = { MR.strings.myExceptionText.desc() }
-    )
-    .register<IllegalArgumentException, StringDesc> {
-        MR.strings.illegalArgumentText.desc()
-    }
-    .register<HttpException, Int> {
-        it.code
-    }
-```
-
-After initializing the registry, you can pass exception mappers of `(Throwable) -> StringDesc` 
-signature from the `ExceptionMappersStorage` to an `ErrorPresenter`:
+You need to pass some `ErrorPresenter` to `ErrorHandler` instance. E.g. creation of error presenters
+in common code:
 
 ```kotlin
 val alertErrorPresenter = AlertErrorPresenter(
-    exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
-    alertTitle = "Error".desc()
+    alertTitle = "Error".desc(),
+    positiveButtonText = "OK".desc()
+)
+val toastErrorPresenter = ToastErrorPresenter(
+    duration = ToastDuration.LONG
 )
 ```
 
-Or you can create your own mapper using extensions:
+`SelectorErrorPresenter` - special presenter that select some error presenter by custom condition lambda 
+which should return some `ErrorPresenter` to be used for showing errors:
 
 ```kotlin
-fun <E : Throwable> ExceptionMappersStorage.throwableToInt(e: E): Int {
-    return find<Int, E>(e) // Tries to find mapper (Throwable) -> Int in the registry 
-        ?.invoke(e) // If it was found - invokes it
-        ?: 0 // Or default value
+val selectorErrorPresenter = SelectorErrorPresenter { throwable ->
+    when (throwable) {
+        is CustomException -> alertErrorPresenter
+        else -> toastErrorPresenter
+    }
 }
+```
+
+And pass some `ErrorPresenter` to `ErrorHandler`:
+
+```kotlin
+val exceptionHandler = ExceptionHandler(
+    errorPresenter = selectorErrorPresenter,
+    exceptionMapper = ExceptionMappersStorage.throwableMapper()
+)
 ```
 
 ## Samples

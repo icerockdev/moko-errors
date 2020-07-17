@@ -4,13 +4,11 @@
 
 package dev.icerock.moko.errors.presenters
 
-import dev.icerock.moko.errors.ErrorPresenter
 import dev.icerock.moko.resources.desc.StringDesc
 
 expect class ToastErrorPresenter(
-    exceptionMapper: (Throwable) -> StringDesc,
     duration: ToastDuration = ToastDuration.SHORT
-) : ErrorPresenter
+) : ErrorPresenter<StringDesc>
 
 enum class ToastDuration {
     SHORT,

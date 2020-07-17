@@ -5,18 +5,25 @@
 package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
-import dev.icerock.moko.errors.ErrorPresenter
+import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
-class ExceptionHandler(
-    errorPresenter: ErrorPresenter,
-    private val errorEventsDispatcher: EventsDispatcher<ErrorEventListener>
-) : ExceptionHandlerBinder by ExceptionHandlerBinderImpl(
-    errorPresenter,
-    errorEventsDispatcher
-) {
+interface ExceptionHandler : ExceptionHandlerBinder {
+    fun <R> handle(block: suspend () -> R): ExceptionHandlerContext<R>
 
-    fun <T> handle(block: suspend () -> T): ExceptionHandlerContext<T> {
-        return ExceptionHandlerContext(errorEventsDispatcher, block)
+    companion object {
+        operator fun <T : Any> invoke(
+            exceptionMapper: ExceptionMapper<T>,
+            errorPresenter: ErrorPresenter<T>,
+            errorEventsDispatcher: EventsDispatcher<ErrorEventListener<T>> = EventsDispatcher(),
+            onCatch: ((Throwable) -> Unit)? = null
+        ): ExceptionHandler {
+            return PresenterExceptionHandler(
+                exceptionMapper = exceptionMapper,
+                errorPresenter = errorPresenter,
+                errorEventsDispatcher = errorEventsDispatcher,
+                onCatch = onCatch
+            )
+        }
     }
 }

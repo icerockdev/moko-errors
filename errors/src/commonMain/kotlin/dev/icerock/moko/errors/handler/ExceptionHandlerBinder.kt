@@ -5,12 +5,12 @@
 package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
-import dev.icerock.moko.errors.ErrorPresenter
+import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
 expect interface ExceptionHandlerBinder
 
-expect class ExceptionHandlerBinderImpl(
-    errorPresenter: ErrorPresenter,
-    eventsDispatcher: EventsDispatcher<ErrorEventListener>
+expect class ExceptionHandlerBinderImpl<T : Any>(
+    errorPresenter: ErrorPresenter<T>,
+    eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>
 ) : ExceptionHandlerBinder

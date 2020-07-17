@@ -7,27 +7,27 @@ package dev.icerock.moko.errors.handler
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import dev.icerock.moko.errors.ErrorEventListener
-import dev.icerock.moko.errors.ErrorPresenter
+import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
 actual interface ExceptionHandlerBinder {
     fun bind(lifecycleOwner: LifecycleOwner, activity: FragmentActivity)
 }
 
-actual class ExceptionHandlerBinderImpl actual constructor(
-    private val errorPresenter: ErrorPresenter,
-    private val eventsDispatcher: EventsDispatcher<ErrorEventListener>
+actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
+    private val errorPresenter: ErrorPresenter<T>,
+    private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>
 ) : ExceptionHandlerBinder {
     override fun bind(lifecycleOwner: LifecycleOwner, activity: FragmentActivity) {
         eventsDispatcher.bind(lifecycleOwner, EventsListener(activity, errorPresenter))
     }
 
-    class EventsListener(
+    class EventsListener<T : Any>(
         private val activity: FragmentActivity,
-        private val errorPresenter: ErrorPresenter
-    ) : ErrorEventListener {
-        override fun showError(exception: Throwable) {
-            errorPresenter.show(exception, activity)
+        private val errorPresenter: ErrorPresenter<T>
+    ) : ErrorEventListener<T> {
+        override fun showError(throwable: Throwable, data: T) {
+            errorPresenter.show(throwable, activity, data)
         }
     }
 }
