@@ -153,11 +153,18 @@ object ExceptionMappersStorage {
      * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
      * class [T].
      */
-    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
-        val clazz = T::class
+    fun <E : Throwable, T : Any> throwableMapper(clazz: KClass<T>): (e: E) -> T {
         val fallback = getFallbackValue(clazz)
         return { e ->
             find(clazz, e, e::class)?.invoke(e) ?: fallback
         }
+    }
+
+    /**
+     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
+     * class [T].
+     */
+    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
+        return throwableMapper(T::class)
     }
 }

@@ -29,13 +29,13 @@ fun createSimpleViewModel(): SimpleViewModel {
     )
     return SimpleViewModel(
         exceptionHandler = ExceptionHandler(
-            exceptionMapper = ExceptionMappersStorage.throwableMapper(),
             errorPresenter = SelectorErrorPresenter { throwable ->
                 when (throwable) {
-                    is IllegalArgumentException -> alertErrorPresenter
+                    is CustomException -> alertErrorPresenter
                     else -> toastErrorPresenter
                 }
             },
+            exceptionMapper = ExceptionMappersStorage.throwableMapper(),
             onCatch = {
                 // E.g. here we can log all exceptions that are handled by ExceptionHandler
                 println("Got exception: $it")

@@ -5,17 +5,10 @@
 package dev.icerock.moko.errors.presenters
 
 import dev.icerock.moko.resources.desc.StringDesc
-import platform.UIKit.UIViewController
 
 /**
  * In iOS there is no such thing as toast, so it shows [AlertErrorPresenter].
  */
 actual class ToastErrorPresenter actual constructor(
     private val duration: ToastDuration
-) : ErrorPresenter<StringDesc> {
-
-    private val alertErrorPresenter = AlertErrorPresenter()
-
-    override fun show(throwable: Throwable, viewController: UIViewController, data: StringDesc) =
-        alertErrorPresenter.show(throwable, viewController, data)
-}
+) : ErrorPresenter<StringDesc> by AlertErrorPresenter()

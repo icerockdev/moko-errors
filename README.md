@@ -56,13 +56,73 @@ dependencies {
 
 ## Usage
 
+#### ExceptionMappersStorage
+
+Registration of simple custom exceptions mapper in the singleton storage:
+
+```kotlin
+ExceptionMappersStorage
+    .register<IllegalArgumentException, StringDesc> {   // Will map all IllegalArgumentException instances to StringDesc
+        "Illegal argument was passed!".desc()
+    }
+    .register<HttpException, Int> {                     // Will map all HttpException instances to Int
+        it.code
+    }
+```
+
+Registration of custom exception mapper with condition:
+
+```kotlin
+ExceptionMappersStorage.condition<StringDesc>(              // Registers exception mapper Throwable -> StringDesc
+    condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
+    mapper = { "Custom error happened!".desc() }            // Mapper for Throwable that matches to the condition
+)
+```
+
+For every error type you should to set fallback (default) value using method `setFallbackValue`  
+(except `StringDesc` class which already has default value).
+
+```kotlin
+ExceptionMappersStorage
+    .setFallbackValue<Int>(520) // Sets for Int error type default value as 520
+
+// Creates new mapper that for any unregistered exception will return the fallback value - 520
+val throwableToIntMapper: (Throwable) -> Int = ExceptionMappersStorage.throwableMapper()
+```
+
+Using factory method `throwableMapper` you can create exception mappers automaticlly:
+
+```kotlin
+val throwableToIntMapper: (Throwable) -> Int = ExceptionMappersStorage.throwableMapper()
+```
+
+If a default value is not found when creating a mapper using factory method `throwableMapper`, an 
+exception will be thrown `FallbackValueNotFoundException`   
+
+The registration can be done in the form of an endless chain:
+
+```kotlin
+ExceptionMappersStorage
+    .condition<StringDesc>(
+        condition = { it is CustomException && it.code == 10 },
+        mapper = { "Custom error happened!".desc() }
+    )
+    .register<IllegalArgumentException, StringDesc> {
+        "Illegal argument was passed!".desc()
+    }
+    .register<HttpException, Int> {
+        it.code
+    }
+    .setFallbackValue<Int>(520)
+```
+
 #### ExceptionHandler
 
 E.g. declare `ExceptionHandler` property in some `ViewModel` class:
 
 ```kotlin
 class SimpleViewModel(
-    val exceptionHandler: ExceptionHandler<StringDesc>
+    val exceptionHandler: ExceptionHandler
 ) : ViewModel() {
     // ...
 }
@@ -85,15 +145,14 @@ On iOS in a `ViewController`:
 viewModel.exceptionHandler.bind(viewController: self)
 ```
 
-Creating instances of `ExceptionHandler` class which works with `(Throwable) -> StringDesc`
-mappers:
+Creating instances of `ExceptionHandler` class which uses `(Throwable) -> StringDesc` mappers:
 
 ```kotlin
 ExceptionHandler<StringDesc>(
-    errorEventsDispatcher = eventsDispatcherInstance,   // moko-mvvm EventsDispatcher instance
-    errorPresenter = errorsPresenterInstance,           // Concrete ErrorPresenter implementation
-    onCatch = {                                         // Optional global catcher
-        println("Got exception: $it")                   // E.g. here we can log all exceptions that are handled by ExceptionHandler
+    errorPresenter = errorsPresenterInstance,                    // Concrete ErrorPresenter implementation
+    exceptionMapper = ExceptionMappersStorage.throwableMapper(), // Create mapper (Throwable) -> StringDesc from ExceptionMappersStorage
+    onCatch = {                                                  // Optional global catcher
+        println("Got exception: $it")                            // E.g. here we can log all exceptions that are handled by ExceptionHandler
     }
 )
 ```
@@ -107,7 +166,7 @@ fun onSendRequest() {
             serverRequest()     // Some dangerous code that can throw an exception
         }.finally {             // Optional finally block
             // Some code        
-        }.execute()             // Executes handler block
+        }.execute()             // Starts code execution in `handle` lambda
     }
 }
 ```
@@ -124,65 +183,6 @@ fun onSendRequest() {
             false                               // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
         }.execute()                             // Starts code execution in `handle` lambda
     }
-}
-```
-
-#### ExceptionMappersStorage
-
-Registration of simple custom exceptions mapper:
-
-```kotlin
-ExceptionMappersStorage
-    .register<IllegalArgumentException, StringDesc> {   // Maps IllegalArgumentException instances to StringDesc
-        "Illegal argument was passed!".desc()
-    }
-    .register<HttpException, Int> {                     // Maps HttpException instances to Int
-        it.code
-    }
-```
-
-Registration of custom exception mapper with condition:
-
-```kotlin
-ExceptionMappersStorage.condition<StringDesc>(              // Registers exception mapper Throwable -> StringDesc
-    condition = { it is CustomException && it.code == 10 }, // Condition that maps Throwable -> Boolean
-    mapper = { "Custom error happened!".desc() }            // Mapper for Throwable that matches to the condition
-)
-```
-
-The registration can be done in the form of an endless chain:
-
-```kotlin
-ExceptionMappersStorage
-    .condition<StringDesc>(
-        condition = { it is CustomException && it.code == 10 },
-        mapper = { "Custom error happened!".desc() }
-    )
-    .register<IllegalArgumentException, StringDesc> {
-        "Illegal argument was passed!".desc()
-    }
-    .register<HttpException, Int> {
-        it.code
-    }
-```
-
-After initializing the registry, you can pass exception mappers of `(Throwable) -> StringDesc` 
-signature from the `ExceptionMappersStorage` to an `ErrorPresenter`:
-
-```kotlin
-val alertErrorPresenter = AlertErrorPresenter(
-    exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
-    alertTitle = "Error".desc()
-)
-```
-
-Or you can create your own mapper using extensions:
-
-```kotlin
-fun <E : Throwable> ExceptionMappersStorage.throwableToInt(e: E): Int {
-    return find<E, Int>(e)  // Tries to find mapper (Throwable) -> Int in the registry 
-        ?.invoke(e)         // If it was found - invokes it
-        ?: 0                // Or default value
 }
 ```
 
