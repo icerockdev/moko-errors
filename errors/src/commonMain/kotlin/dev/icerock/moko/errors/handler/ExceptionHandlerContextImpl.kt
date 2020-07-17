@@ -8,14 +8,13 @@ package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.HandlerResult
-import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlin.reflect.KClass
 
 private typealias Catcher = (Throwable) -> Boolean
 
 internal class ExceptionHandlerContextImpl<T : Any, R>(
-    private val errorPresenter: ErrorPresenter<T>,
+    private val exceptionMapper: ExceptionMapper<T>,
     private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
     private val onCatch: ((Throwable) -> Unit)?,
     private val block: suspend () -> R
@@ -44,7 +43,10 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
             onCatch?.invoke(e)
             val isHandled = catchersMap[e::class]?.invoke(e)
             if (isHandled == null || isHandled == false) {
-                errorPresenter.sendErrorEvent(eventsDispatcher, e)
+                val errorValue = exceptionMapper(e)
+                eventsDispatcher.dispatchEvent {
+                    showError(e, errorValue)
+                }
             }
             HandlerResult.Failure(e)
         } finally {

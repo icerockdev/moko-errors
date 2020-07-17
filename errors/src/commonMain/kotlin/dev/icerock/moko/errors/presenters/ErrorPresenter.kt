@@ -5,19 +5,9 @@
 package dev.icerock.moko.errors.presenters
 
 import dev.icerock.moko.errors.ErrorEventListener
+import dev.icerock.moko.errors.handler.ExceptionHandlerBinder
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
-expect abstract class ErrorPresenter<T : Any> : ErrorPresenterBase<T>
-
-abstract class ErrorPresenterBase<T : Any> {
-
-    protected abstract val exceptionMapper: (Throwable) -> T
-
-    fun sendErrorEvent(
-        eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
-        throwable: Throwable
-    ) {
-        val data = exceptionMapper(throwable)
-        eventsDispatcher.dispatchEvent { showError(throwable, data) }
-    }
+expect abstract class ErrorPresenter<T : Any>() : ErrorEventListener<T>, ExceptionHandlerBinder {
+    internal abstract val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>
 }

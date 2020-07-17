@@ -12,7 +12,7 @@ actual class AlertErrorPresenter actual constructor(
     override val exceptionMapper: (Throwable) -> StringDesc,
     private val alertTitle: StringDesc,
     private val positiveButtonText: StringDesc
-) : ErrorPresenter<StringDesc>() {
+) : PlatformErrorPresenter<StringDesc>() {
 
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         AlertDialogFragment().apply {

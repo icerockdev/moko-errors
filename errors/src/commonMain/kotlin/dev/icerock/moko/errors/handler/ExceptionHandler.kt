@@ -6,6 +6,7 @@ package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.presenters.ErrorPresenter
+import dev.icerock.moko.errors.presenters.PlatformErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
 interface ExceptionHandler : ExceptionHandlerBinder {

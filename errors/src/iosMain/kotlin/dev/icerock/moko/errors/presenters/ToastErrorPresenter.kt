@@ -13,7 +13,7 @@ import platform.UIKit.UIViewController
 actual class ToastErrorPresenter actual constructor(
     override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: ToastDuration
-) : ErrorPresenter<StringDesc>() {
+) : PlatformErrorPresenter<StringDesc>() {
 
     private val alertErrorPresenter = AlertErrorPresenter(exceptionMapper)
 

@@ -11,7 +11,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 actual class ToastErrorPresenter actual constructor(
     override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: ToastDuration
-) : ErrorPresenter<StringDesc>() {
+) : PlatformErrorPresenter<StringDesc>() {
 
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         Toast.makeText(

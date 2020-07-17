@@ -13,7 +13,7 @@ import platform.UIKit.UIViewController
 actual class SnackBarErrorPresenter actual constructor(
     override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: SnackBarDuration
-) : ErrorPresenter<StringDesc>() {
+) : PlatformErrorPresenter<StringDesc>() {
 
     private val alertErrorPresenter = AlertErrorPresenter(exceptionMapper)
 

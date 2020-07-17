@@ -6,7 +6,6 @@ package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.HandlerResult
-import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlin.reflect.KClass
 
@@ -26,13 +25,13 @@ abstract class ExceptionHandlerContext<R> {
 
     companion object {
         operator fun <T : Any, R> invoke(
-            errorPresenter: ErrorPresenter<T>,
+            exceptionMapper: ExceptionMapper<T>,
             eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
             onCatch: ((Throwable) -> Unit)?,
             block: suspend () -> R
         ): ExceptionHandlerContext<R> {
             return ExceptionHandlerContextImpl(
-                errorPresenter = errorPresenter,
+                exceptionMapper = exceptionMapper,
                 eventsDispatcher = eventsDispatcher,
                 onCatch = onCatch,
                 block = block

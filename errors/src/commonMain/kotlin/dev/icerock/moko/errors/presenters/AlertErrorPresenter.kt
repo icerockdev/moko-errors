@@ -12,4 +12,4 @@ expect class AlertErrorPresenter(
     exceptionMapper: (Throwable) -> StringDesc,
     alertTitle: StringDesc = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
     positiveButtonText: StringDesc = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
-) : ErrorPresenter<StringDesc>
+) : PlatformErrorPresenter<StringDesc>

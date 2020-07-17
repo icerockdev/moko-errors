@@ -9,7 +9,7 @@ import dev.icerock.moko.resources.desc.StringDesc
 expect class ToastErrorPresenter(
     exceptionMapper: (Throwable) -> StringDesc,
     duration: ToastDuration = ToastDuration.SHORT
-) : ErrorPresenter<StringDesc>
+) : PlatformErrorPresenter<StringDesc>
 
 enum class ToastDuration {
     SHORT,

@@ -5,7 +5,7 @@
 package dev.icerock.moko.errors.handler
 
 import dev.icerock.moko.errors.ErrorEventListener
-import dev.icerock.moko.errors.presenters.ErrorPresenter
+import dev.icerock.moko.errors.presenters.PlatformErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import platform.UIKit.UIViewController
 
@@ -14,7 +14,7 @@ actual interface ExceptionHandlerBinder {
 }
 
 actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
-    private val errorPresenter: ErrorPresenter<T>,
+    private val errorPresenter: PlatformErrorPresenter<T>,
     private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>
 ) : ExceptionHandlerBinder {
     override fun bind(viewController: UIViewController) {
