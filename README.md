@@ -25,7 +25,8 @@ to error classes required for **ErrorPresenter** objects.
 on the platforms. Converts the exception class to an error object to display. There are several
 `ErrorPresenter` implementations: `AlertErrorPresenter` - displays errors text in alert dialogs,
 `ToastErrorPresenter` - displays errors text in toasts for Android and in alert dialog for iOS,
-`SnackBarErrorPresenter` - displays errors text in snackbar for Android and in alert dialog for iOS.
+`SnackBarErrorPresenter` - displays errors text in snackbar for Android and in alert dialog for iOS,
+`SelectorErrorPresenter` - for selecting error presenter by some custom condition.
 
 ## Requirements
 - Gradle version 5.6.4+
@@ -184,6 +185,48 @@ fun onSendRequest() {
         }.execute()                             // Starts code execution in `handle` lambda
     }
 }
+```
+
+#### ErrorPresenter
+
+There are `ErrorPresenter` interface implementations:
+* `AlertErrorPresenter` - displays errors text in alert dialogs;
+* `ToastErrorPresenter` - displays errors text in toasts for Android (for iOS shows alert dialog);
+* `SnackBarErrorPresenter` - displays errors text in snackbar for Android (for iOS shows alert dialog);
+* `SelectorErrorPresenter` - for selecting error presenter by some custom condition.
+
+You need to pass some `ErrorPresenter` to `ErrorHandler` instance. E.g. creation of error presenters
+in common code:
+
+```kotlin
+val alertErrorPresenter = AlertErrorPresenter(
+    alertTitle = "Error".desc(),
+    positiveButtonText = "OK".desc()
+)
+val toastErrorPresenter = ToastErrorPresenter(
+    duration = ToastDuration.LONG
+)
+```
+
+`SelectorErrorPresenter` - special presenter that select some error presenter by custom condition lambda 
+which should return some `ErrorPresenter` to be used for showing errors:
+
+```kotlin
+val selectorErrorPresenter = SelectorErrorPresenter { throwable ->
+    when (throwable) {
+        is CustomException -> alertErrorPresenter
+        else -> toastErrorPresenter
+    }
+}
+```
+
+And pass some `ErrorPresenter` to `ErrorHandler`:
+
+```kotlin
+val exceptionHandler = ExceptionHandler(
+    errorPresenter = selectorErrorPresenter,
+    exceptionMapper = ExceptionMappersStorage.throwableMapper()
+)
 ```
 
 ## Samples
