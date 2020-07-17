@@ -19,28 +19,31 @@ import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-fun createSimpleViewModel() = SimpleViewModel(
-    exceptionHandler = ExceptionHandler(
-        errorPresenter = SelectorErrorPresenter { throwable ->
-            // TODO maybe we can remove dynamic creations of presenters?
-            when (throwable) {
-                is IllegalArgumentException -> AlertErrorPresenter(
-                    exceptionMapper = ExceptionMappersStorage.throwableMapper(),
-                    alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
-                    positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
-                )
-                else -> ToastErrorPresenter(
-                    exceptionMapper = ExceptionMappersStorage.throwableMapper(),
-                    duration = ToastDuration.LONG
-                )
-            }
-        },
-        onCatch = {
-            // E.g. here we can log all exceptions that are handled by ExceptionHandler
-            println("Got exception: $it")
-        }
+fun createSimpleViewModel(): SimpleViewModel {
+    val alertErrorPresenter = AlertErrorPresenter(
+        exceptionMapper = ExceptionMappersStorage.throwableMapper(),
+        alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
+        positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
     )
-)
+    val toastErrorPresenter = ToastErrorPresenter(
+        exceptionMapper = ExceptionMappersStorage.throwableMapper(),
+        duration = ToastDuration.LONG
+    )
+    return SimpleViewModel(
+        exceptionHandler = ExceptionHandler(
+            errorPresenter = SelectorErrorPresenter { throwable ->
+                when (throwable) {
+                    is IllegalArgumentException -> alertErrorPresenter
+                    else -> toastErrorPresenter
+                }
+            },
+            onCatch = {
+                // E.g. here we can log all exceptions that are handled by ExceptionHandler
+                println("Got exception: $it")
+            }
+        )
+    )
+}
 
 class SimpleViewModel(
     val exceptionHandler: ExceptionHandler
