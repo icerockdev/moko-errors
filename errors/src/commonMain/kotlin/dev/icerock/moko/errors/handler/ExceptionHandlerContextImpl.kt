@@ -14,12 +14,12 @@ import kotlin.reflect.KClass
 
 private typealias Catcher = (Throwable) -> Boolean
 
-class ExceptionHandlerContextImpl<T : Any, R> internal constructor(
+internal class ExceptionHandlerContextImpl<T : Any, R>(
     private val errorPresenter: ErrorPresenter<T>,
     private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
     private val onCatch: ((Throwable) -> Unit)?,
     private val block: suspend () -> R
-) : ExceptionHandlerContext<R> {
+) : ExceptionHandlerContext<R>() {
     private val catchersMap = mutableMapOf<KClass<*>, Catcher>()
 
     private var finallyBlock: (() -> Unit)? = null

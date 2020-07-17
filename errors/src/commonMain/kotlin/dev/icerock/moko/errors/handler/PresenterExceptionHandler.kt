@@ -8,7 +8,7 @@ import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 
-class PresenterExceptionHandler<T : Any>(
+internal class PresenterExceptionHandler<T : Any>(
     private val errorPresenter: ErrorPresenter<T>,
     private val errorEventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
     private val onCatch: ((Throwable) -> Unit)? = null
@@ -17,6 +17,6 @@ class PresenterExceptionHandler<T : Any>(
     errorEventsDispatcher
 ), ExceptionHandler {
     override fun <R> handle(block: suspend () -> R): ExceptionHandlerContext<R> {
-        return ExceptionHandlerContextImpl(errorPresenter, errorEventsDispatcher, onCatch, block)
+        return ExceptionHandlerContext(errorPresenter, errorEventsDispatcher, onCatch, block)
     }
 }

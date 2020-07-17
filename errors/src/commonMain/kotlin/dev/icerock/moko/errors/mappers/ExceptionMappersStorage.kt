@@ -26,6 +26,10 @@ object ExceptionMappersStorage {
         fallbackValuesMap[StringDesc::class] = MR.strings.moko_errors_unknownError.desc()
     }
 
+
+    /**
+     * Register simple mapper (E) -> T.
+     */
     fun <T : Any, E : Throwable> register(
         resultClass: KClass<T>,
         exceptionClass: KClass<E>,
@@ -38,6 +42,9 @@ object ExceptionMappersStorage {
         return this
     }
 
+    /**
+     * Register mapper (E) -> T with condition (Throwable) -> Boolean.
+     */
     fun <T : Any> register(
         resultClass: KClass<T>,
         conditionPair: ConditionPair
@@ -113,22 +120,53 @@ object ExceptionMappersStorage {
         exceptionClass = throwable::class
     )
 
+    /**
+     * Sets fallback (default) value for [T] errors type.
+     */
     fun <T : Any> setFallbackValue(clazz: KClass<T>, value: T): ExceptionMappersStorage {
         fallbackValuesMap[clazz] = value
         return ExceptionMappersStorage
     }
 
+    /**
+     * Sets fallback (default) value for [T] errors type.
+     */
     inline fun <reified T : Any> setFallbackValue(value: T): ExceptionMappersStorage =
         setFallbackValue(T::class, value)
 
+    /**
+     * Returns fallback (default) value for [T] errors type.
+     * If there is no default value for the class [T], then [FallbackValueNotFoundException]
+     * exception will be thrown.
+     */
     fun <T : Any> getFallbackValue(clazz: KClass<T>): T {
         return fallbackValuesMap[clazz] as? T
-            ?: throw IllegalArgumentException("There is no fallback value for class $clazz")
+            ?: throw FallbackValueNotFoundException(clazz)
     }
 
+    /**
+     * Returns fallback (default) value for [T] errors type.
+     * If there is no default value for the class [T], then [FallbackValueNotFoundException]
+     * exception will be thrown.
+     */
     inline fun <reified T : Any> getFallbackValue(): T = getFallbackValue(T::class)
-}
 
-fun <E : Throwable> ExceptionMappersStorage.throwableToStringDesc(e: E): StringDesc {
-    return find<E, StringDesc>(e)?.invoke(e) ?: getFallbackValue()
+    /**
+     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
+     * class [T].
+     */
+    fun <E : Throwable, T : Any> throwableMapper(clazz: KClass<T>): (e: E) -> T {
+        val fallback = getFallbackValue(clazz)
+        return { e ->
+            find(clazz, e, e::class)?.invoke(e) ?: fallback
+        }
+    }
+
+    /**
+     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
+     * class [T].
+     */
+    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
+        return throwableMapper(T::class)
+    }
 }

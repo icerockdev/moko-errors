@@ -22,7 +22,7 @@ class MainActivity : MvvmActivity<ActivityMainBinding, SimpleViewModel>() {
 
     override fun viewModelFactory(): ViewModelProvider.Factory {
         return createViewModelFactory {
-            createSimpleViewModel(eventsDispatcherOnMain())
+            createSimpleViewModel()
         }
     }
 

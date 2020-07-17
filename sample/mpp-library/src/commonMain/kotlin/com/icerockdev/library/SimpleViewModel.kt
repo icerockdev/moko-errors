@@ -4,30 +4,21 @@
 
 package com.icerockdev.library
 
-import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.handler.ExceptionHandler
-import dev.icerock.moko.errors.handler.PresenterExceptionHandler
-import dev.icerock.moko.errors.handler.catch
 import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
-import dev.icerock.moko.errors.mappers.throwableToStringDesc
 import dev.icerock.moko.errors.presenters.AlertErrorPresenter
-import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-fun createSimpleViewModel(
-    errorEventsDispatcher: EventsDispatcher<ErrorEventListener<StringDesc>>
-) = SimpleViewModel(
-    exceptionHandler = PresenterExceptionHandler(
-        errorEventsDispatcher = errorEventsDispatcher,
+fun createSimpleViewModel() = SimpleViewModel(
+    exceptionHandler = ExceptionHandler(
         errorPresenter = AlertErrorPresenter(
-            exceptionMapper = ExceptionMappersStorage::throwableToStringDesc,
+            exceptionMapper = ExceptionMappersStorage.throwableMapper(),
             alertTitle = MR.strings.errorDialogTitle.desc()
         ),
         onCatch = {
