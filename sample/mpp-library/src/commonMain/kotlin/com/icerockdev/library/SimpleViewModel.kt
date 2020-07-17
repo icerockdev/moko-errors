@@ -4,9 +4,13 @@
 
 package com.icerockdev.library
 
+import dev.icerock.moko.errors.MR
 import dev.icerock.moko.errors.handler.ExceptionHandler
 import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
 import dev.icerock.moko.errors.presenters.AlertErrorPresenter
+import dev.icerock.moko.errors.presenters.SelectorErrorPresenter
+import dev.icerock.moko.errors.presenters.ToastDuration
+import dev.icerock.moko.errors.presenters.ToastErrorPresenter
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
@@ -17,10 +21,20 @@ import kotlin.random.Random
 
 fun createSimpleViewModel() = SimpleViewModel(
     exceptionHandler = ExceptionHandler(
-        errorPresenter = AlertErrorPresenter(
-            exceptionMapper = ExceptionMappersStorage.throwableMapper(),
-            alertTitle = MR.strings.errorDialogTitle.desc()
-        ),
+        errorPresenter = SelectorErrorPresenter { throwable ->
+            // TODO maybe we can remove dynamic creations of presenters?
+            when (throwable) {
+                is IllegalArgumentException -> AlertErrorPresenter(
+                    exceptionMapper = ExceptionMappersStorage.throwableMapper(),
+                    alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
+                    positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
+                )
+                else -> ToastErrorPresenter(
+                    exceptionMapper = ExceptionMappersStorage.throwableMapper(),
+                    duration = ToastDuration.LONG
+                )
+            }
+        },
         onCatch = {
             // E.g. here we can log all exceptions that are handled by ExceptionHandler
             println("Got exception: $it")

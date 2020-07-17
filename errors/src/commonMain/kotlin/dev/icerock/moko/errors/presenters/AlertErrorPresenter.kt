@@ -5,11 +5,12 @@
 package dev.icerock.moko.errors.presenters
 
 import dev.icerock.moko.errors.MR
+import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
 import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
 
 expect class AlertErrorPresenter(
-    exceptionMapper: (Throwable) -> StringDesc,
+    exceptionMapper: (Throwable) -> StringDesc = ExceptionMappersStorage.throwableMapper(),
     alertTitle: StringDesc = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
     positiveButtonText: StringDesc = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
 ) : ErrorPresenter<StringDesc>
