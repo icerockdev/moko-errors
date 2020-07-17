@@ -6,6 +6,6 @@ package dev.icerock.moko.errors.presenters
 
 import platform.UIKit.UIViewController
 
-actual abstract class ErrorPresenter<T : Any> : ErrorPresenterBase<T>() {
-    abstract fun show(throwable: Throwable, viewController: UIViewController, data: T)
+actual interface ErrorPresenter<T : Any> {
+    fun show(throwable: Throwable, viewController: UIViewController, data: T)
 }

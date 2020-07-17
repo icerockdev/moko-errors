@@ -13,11 +13,13 @@ interface ExceptionHandler : ExceptionHandlerBinder {
 
     companion object {
         operator fun <T : Any> invoke(
+            exceptionMapper: ExceptionMapper<T>,
             errorPresenter: ErrorPresenter<T>,
             errorEventsDispatcher: EventsDispatcher<ErrorEventListener<T>> = EventsDispatcher(),
             onCatch: ((Throwable) -> Unit)? = null
         ): ExceptionHandler {
             return PresenterExceptionHandler(
+                exceptionMapper = exceptionMapper,
                 errorPresenter = errorPresenter,
                 errorEventsDispatcher = errorEventsDispatcher,
                 onCatch = onCatch

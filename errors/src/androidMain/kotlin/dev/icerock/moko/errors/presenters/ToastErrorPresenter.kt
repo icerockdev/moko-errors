@@ -9,9 +9,8 @@ import androidx.fragment.app.FragmentActivity
 import dev.icerock.moko.resources.desc.StringDesc
 
 actual class ToastErrorPresenter actual constructor(
-    override val exceptionMapper: (Throwable) -> StringDesc,
     private val duration: ToastDuration
-) : ErrorPresenter<StringDesc>() {
+) : ErrorPresenter<StringDesc> {
 
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         Toast.makeText(

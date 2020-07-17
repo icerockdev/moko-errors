@@ -10,22 +10,20 @@ import dev.icerock.moko.resources.desc.desc
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
-internal typealias ExceptionMapper = (Throwable) -> Any
+internal typealias ThrowableMapper = (Throwable) -> Any
 
+@Suppress("TooManyFunctions")
 @ThreadLocal
 object ExceptionMappersStorage {
 
-    private val fallbackValuesMap: MutableMap<KClass<out Any>, Any> = mutableMapOf()
+    private val fallbackValuesMap: MutableMap<KClass<out Any>, Any> = mutableMapOf(
+        StringDesc::class to MR.strings.moko_errors_unknownError.desc()
+    )
 
-    private val mappersMap: MutableMap<KClass<out Any>, MutableMap<KClass<out Throwable>, ExceptionMapper>> =
+    private val mappersMap: MutableMap<KClass<out Any>, MutableMap<KClass<out Throwable>, ThrowableMapper>> =
         mutableMapOf()
     private val conditionMappers: MutableMap<KClass<out Any>, MutableList<ConditionPair>> =
         mutableMapOf()
-
-    init {
-        fallbackValuesMap[StringDesc::class] = MR.strings.moko_errors_unknownError.desc()
-    }
-
 
     /**
      * Register simple mapper (E) -> T.
@@ -38,7 +36,7 @@ object ExceptionMappersStorage {
         if (!mappersMap.containsKey(resultClass)) {
             mappersMap[resultClass] = mutableMapOf()
         }
-        mappersMap.get(resultClass)?.put(exceptionClass, mapper as ExceptionMapper)
+        mappersMap.get(resultClass)?.put(exceptionClass, mapper as ThrowableMapper)
         return this
     }
 
@@ -79,7 +77,7 @@ object ExceptionMappersStorage {
         resultClass = T::class,
         conditionPair = ConditionPair(
             condition,
-            mapper as ExceptionMapper
+            mapper as ThrowableMapper
         )
     )
 
@@ -155,18 +153,11 @@ object ExceptionMappersStorage {
      * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
      * class [T].
      */
-    fun <E : Throwable, T : Any> throwableMapper(clazz: KClass<T>): (e: E) -> T {
+    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
+        val clazz = T::class
         val fallback = getFallbackValue(clazz)
         return { e ->
             find(clazz, e, e::class)?.invoke(e) ?: fallback
         }
-    }
-
-    /**
-     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
-     * class [T].
-     */
-    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
-        return throwableMapper(T::class)
     }
 }

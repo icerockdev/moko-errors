@@ -9,10 +9,9 @@ import androidx.fragment.app.FragmentActivity
 import dev.icerock.moko.resources.desc.StringDesc
 
 actual class AlertErrorPresenter actual constructor(
-    override val exceptionMapper: (Throwable) -> StringDesc,
     private val alertTitle: StringDesc,
     private val positiveButtonText: StringDesc
-) : ErrorPresenter<StringDesc>() {
+) : ErrorPresenter<StringDesc> {
 
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
         AlertDialogFragment().apply {

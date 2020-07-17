@@ -4,11 +4,9 @@
 
 package dev.icerock.moko.errors.presenters
 
-import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
 import dev.icerock.moko.resources.desc.StringDesc
 
 expect class ToastErrorPresenter(
-    exceptionMapper: (Throwable) -> StringDesc = ExceptionMappersStorage.throwableMapper(),
     duration: ToastDuration = ToastDuration.SHORT
 ) : ErrorPresenter<StringDesc>
 

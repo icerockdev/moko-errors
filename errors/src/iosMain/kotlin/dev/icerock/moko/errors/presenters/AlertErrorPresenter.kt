@@ -12,10 +12,9 @@ import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIViewController
 
 actual class AlertErrorPresenter actual constructor(
-    override val exceptionMapper: (Throwable) -> StringDesc,
     private val alertTitle: StringDesc,
     private val positiveButtonText: StringDesc
-) : ErrorPresenter<StringDesc>() {
+) : ErrorPresenter<StringDesc> {
 
     override fun show(throwable: Throwable, viewController: UIViewController, data: StringDesc) {
         val alert = UIAlertController.alertControllerWithTitle(

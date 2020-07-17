@@ -21,16 +21,15 @@ import kotlin.random.Random
 
 fun createSimpleViewModel(): SimpleViewModel {
     val alertErrorPresenter = AlertErrorPresenter(
-        exceptionMapper = ExceptionMappersStorage.throwableMapper(),
         alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
         positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
     )
     val toastErrorPresenter = ToastErrorPresenter(
-        exceptionMapper = ExceptionMappersStorage.throwableMapper(),
         duration = ToastDuration.LONG
     )
     return SimpleViewModel(
         exceptionHandler = ExceptionHandler(
+            exceptionMapper = ExceptionMappersStorage.throwableMapper(),
             errorPresenter = SelectorErrorPresenter { throwable ->
                 when (throwable) {
                     is IllegalArgumentException -> alertErrorPresenter

@@ -8,9 +8,7 @@ import platform.UIKit.UIViewController
 
 actual class SelectorErrorPresenter<T : Any> actual constructor(
     private val errorPresenterSelector: (Throwable) -> ErrorPresenter<T>
-) : ErrorPresenter<T>() {
-    override val exceptionMapper: (Throwable) -> T
-        get() = throw IllegalArgumentException("this will never call")
+) : ErrorPresenter<T> {
 
     override fun show(throwable: Throwable, viewController: UIViewController, data: T) {
         errorPresenterSelector(throwable).show(throwable, viewController, data)
