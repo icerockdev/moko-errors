@@ -17,11 +17,18 @@ actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
     private val errorPresenter: ErrorPresenter<T>,
     private val eventsDispatcher: EventsDispatcher<ErrorEventListener<T>>
 ) : ExceptionHandlerBinder {
+
+    private var eventsListener: ErrorEventListener<T>? = null
+
     override fun bind(viewController: UIViewController) {
-        eventsDispatcher.listener = object : ErrorEventListener<T> {
+        eventsListener = createEventsListener(viewController)
+        eventsDispatcher.listener = eventsListener
+    }
+
+    private fun createEventsListener(viewController: UIViewController) =
+        object : ErrorEventListener<T> {
             override fun showError(throwable: Throwable, data: T) {
                 errorPresenter.show(throwable, viewController, data)
             }
         }
-    }
 }
