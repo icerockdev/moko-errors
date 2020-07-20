@@ -9,7 +9,7 @@ object Versions {
         const val minSdk = 16
     }
 
-    const val mokoErrors = "0.2.0"
+    const val mokoErrors = "0.2.1"
 
     const val kotlin = "1.3.72"
     private const val androidArch = "2.0.0"
