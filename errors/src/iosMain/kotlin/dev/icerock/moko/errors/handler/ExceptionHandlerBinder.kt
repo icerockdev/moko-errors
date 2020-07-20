@@ -8,6 +8,7 @@ import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.presenters.ErrorPresenter
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import platform.UIKit.UIViewController
+import kotlin.native.ref.WeakReference
 
 actual interface ExceptionHandlerBinder {
     fun bind(viewController: UIViewController)
@@ -27,8 +28,12 @@ actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
 
     private fun createEventsListener(viewController: UIViewController) =
         object : ErrorEventListener<T> {
+            val viewControllerRef = WeakReference(viewController)
+
             override fun showError(throwable: Throwable, data: T) {
-                errorPresenter.show(throwable, viewController, data)
+                viewControllerRef.get()?.let {
+                    errorPresenter.show(throwable, it, data)
+                }
             }
         }
 }
