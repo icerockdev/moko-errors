@@ -15,11 +15,17 @@ group = "dev.icerock.moko"
 version = Deps.mokoErrorsVersion
 
 dependencies {
+    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
+
     androidMainImplementation(Deps.Libs.Android.appCompat)
     androidMainImplementation(Deps.Libs.Android.material)
 
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoMvvm)
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources)
+
+    // temporary fix of https://youtrack.jetbrains.com/issue/KT-41083
+    commonMainImplementation("dev.icerock.moko:parcelize:0.4.0")
+    commonMainImplementation("dev.icerock.moko:graphics:0.4.0")
 }
 
 multiplatformResources {
