@@ -21,7 +21,7 @@ dependencies {
     androidMainImplementation(Deps.Libs.Android.material)
 
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoMvvm)
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoResources)
 
     // temporary fix of https://youtrack.jetbrains.com/issue/KT-41083
     commonMainImplementation("dev.icerock.moko:parcelize:0.4.0")
