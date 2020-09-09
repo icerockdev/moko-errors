@@ -5,10 +5,15 @@
 package dev.icerock.moko.errors.presenters
 
 import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.errors.MR
 
 /**
  * In iOS there is no such thing as snackbar, so it shows [AlertErrorPresenter].
  */
 actual class SnackBarErrorPresenter actual constructor(
-    private val duration: SnackBarDuration
-) : ErrorPresenter<StringDesc> by AlertErrorPresenter()
+    duration: SnackBarDuration
+) : ErrorPresenter<StringDesc> by AlertErrorPresenter(
+    alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
+    positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
+)

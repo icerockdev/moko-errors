@@ -3,38 +3,21 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.multiplatform")
-    id("dev.icerock.mobile.multiplatform")
-    id("dev.icerock.mobile.multiplatform-resources")
+    plugin(Deps.Plugins.androidLibrary)
+    plugin(Deps.Plugins.kotlinMultiplatform)
+    plugin(Deps.Plugins.mobileMultiplatform)
+    plugin(Deps.Plugins.mokoResources)
+    plugin(Deps.Plugins.iosFramework)
 }
-
-android {
-    compileSdkVersion(Versions.Android.compileSdk)
-
-    defaultConfig {
-        minSdkVersion(Versions.Android.minSdk)
-        targetSdkVersion(Versions.Android.targetSdk)
-    }
-}
-
-val exportedLibs = listOf(
-    Deps.Libs.MultiPlatform.mokoResources,
-    Deps.Libs.MultiPlatform.mokoMvvm
-)
-
-setupFramework(exports = exportedLibs)
 
 dependencies {
-    mppLibrary(Deps.Libs.MultiPlatform.kotlinStdLib)
-    mppLibrary(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
 
-    mppLibrary(Deps.Libs.MultiPlatform.mokoResources)
-    mppLibrary(Deps.Libs.MultiPlatform.mokoErrors)
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoErrors)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvm)
 
-    androidLibrary(Deps.Libs.Android.lifecycle)
-
-    exportedLibs.forEach { mppLibrary(it) }
+    androidMainImplementation(Deps.Libs.Android.lifecycle)
 }
 
 multiplatformResources {

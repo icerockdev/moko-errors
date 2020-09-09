@@ -4,11 +4,16 @@
 
 package dev.icerock.moko.errors.presenters
 
+import dev.icerock.moko.errors.MR
 import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
 
 /**
  * In iOS there is no such thing as toast, so it shows [AlertErrorPresenter].
  */
 actual class ToastErrorPresenter actual constructor(
-    private val duration: ToastDuration
-) : ErrorPresenter<StringDesc> by AlertErrorPresenter()
+    duration: ToastDuration
+) : ErrorPresenter<StringDesc> by AlertErrorPresenter(
+    alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
+    positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
+)

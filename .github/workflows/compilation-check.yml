@@ -16,7 +16,5 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Check library build
-      run: ./gradlew -PlibraryPublish detekt :errors:publishToMavenLocal
-    - name: Check library sample
-      run: ./gradlew detekt :sample:mpp-library:build
+    - name: Check build
+      run: ./gradlew detekt build publishToMavenLocal
