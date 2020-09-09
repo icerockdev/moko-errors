@@ -1,6 +1,6 @@
 ![moko-errors](img/logo.png)
 
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://api.bintray.com/packages/icerockdev/moko/moko-errors/images/download.svg) ](https://bintray.com/icerockdev/moko/moko-errors/_latestVersion) ![kotlin-version](https://img.shields.io/badge/kotlin-1.3.72-orange)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://api.bintray.com/packages/icerockdev/moko/moko-errors/images/download.svg) ](https://bintray.com/icerockdev/moko/moko-errors/_latestVersion) ![kotlin-version](https://img.shields.io/badge/kotlin-1.4.0-orange)
 
 # Mobile Kotlin errors
 This is a Kotlin MultiPlatform library that provides automatic exception handling and
@@ -13,7 +13,7 @@ automatic error displaying to a screen.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Samples](#samples)
-- [Set Up Locally](#setup-locally)
+- [Set Up Locally](#set-up-locally)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -29,7 +29,7 @@ on the platforms. Converts the exception class to an error object to display. Th
 `SelectorErrorPresenter` - for selecting error presenter by some custom condition.
 
 ## Requirements
-- Gradle version 5.6.4+
+- Gradle version 6.0+
 - Android API 16+
 - iOS version 9.0+
 
@@ -38,6 +38,8 @@ on the platforms. Converts the exception class to an error object to display. Th
   - 0.1.0
   - 0.2.0
   - 0.2.1
+- kotlin 1.4.0
+  - 0.3.0
 
 ## Installation
 root build.gradle  
@@ -52,7 +54,7 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.2.1")
+    commonMainApi("dev.icerock.moko:errors:0.3.0")
 }
 ```
 
@@ -235,8 +237,7 @@ Please see more examples in the [sample directory](sample).
 
 ## Set Up Locally 
 - The [errors directory](errors) contains the `errors` library;
-- The [sample directory](sample) contains sample apps for Android and iOS; plus the mpp-library connected to the apps;
-- For local testing a library use the `./publishToMavenLocal.sh` script - so that sample apps use the locally published version.
+- The [sample directory](sample) contains sample apps for Android and iOS; plus the mpp-library connected to the apps.
 
 ## Contributing
 All development (both new features and bug fixes) is performed in the `develop` branch. This way `master` always contains the sources of the most recently released version. Please send PRs with bug fixes to the `develop` branch. Documentation fixes in the markdown files are an exception to this rule. They are updated directly in `master`.

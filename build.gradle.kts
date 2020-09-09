@@ -2,14 +2,28 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
+buildscript {
+    repositories {
+        jcenter()
+        google()
+
+        maven { url = uri("https://dl.bintray.com/kotlin/kotlin") }
+        maven { url = uri("https://kotlin.bintray.com/kotlinx") }
+        maven { url = uri("https://plugins.gradle.org/m2/") }
+        maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
+    }
+
+    dependencies {
+        plugin(Deps.Plugins.mokoResources)
+    }
+}
+
 plugins {
-    id("io.gitlab.arturbosch.detekt") version Versions.detekt apply false
+    plugin(Deps.Plugins.detekt).apply(false)
 }
 
 allprojects {
     repositories {
-        mavenLocal()
-
         google()
         jcenter()
 
@@ -18,15 +32,25 @@ allprojects {
         maven { url = uri("https://dl.bintray.com/icerockdev/moko") }
     }
 
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+    plugins.withId(Deps.Plugins.androidLibrary.id) {
+        configure<com.android.build.gradle.LibraryExtension> {
+            compileSdkVersion(Deps.Android.compileSdk)
+
+            defaultConfig {
+                minSdkVersion(Deps.Android.minSdk)
+                targetSdkVersion(Deps.Android.targetSdk)
+            }
+        }
+    }
+
+    apply(plugin = Deps.Plugins.detekt.id)
 
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-        toolVersion = Versions.detekt
         input.setFrom("src/commonMain/kotlin", "src/androidMain/kotlin", "src/iosMain/kotlin")
     }
 
     dependencies {
-        "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detekt}")
+        "detektPlugins"(Deps.Libs.Detekt.detektFormatting)
     }
 }
 
