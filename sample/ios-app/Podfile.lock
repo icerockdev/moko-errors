@@ -1,5 +1,5 @@
 PODS:
-  - MultiPlatformLibrary (0.4.0)
+  - MultiPlatformLibrary (0.3.1)
 
 DEPENDENCIES:
   - MultiPlatformLibrary (from `../mpp-library`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../mpp-library"
 
 SPEC CHECKSUMS:
-  MultiPlatformLibrary: 4d5fc086193c23bbcb9625a29081155eb92077e9
+  MultiPlatformLibrary: 5f0f4dfd4a95a1b6e698631cc4425e922ab03125
 
 PODFILE CHECKSUM: e8746dc30e9d53a96c59e8f821148cde03ea8c5b
 

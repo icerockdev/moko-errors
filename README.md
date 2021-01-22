@@ -41,7 +41,7 @@ on the platforms. Converts the exception class to an error object to display. Th
 - kotlin 1.4.0
   - 0.3.0
 - kotlin 1.4.21
-  - 0.4.0
+  - 0.3.1
 
 ## Installation
 root build.gradle  
@@ -56,7 +56,7 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.4.0")
+    commonMainApi("dev.icerock.moko:errors:0.3.1")
 }
 ```
 
