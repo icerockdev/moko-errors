@@ -20,7 +20,7 @@ dependencies {
     androidMainImplementation(Deps.Libs.Android.appCompat)
     androidMainImplementation(Deps.Libs.Android.material)
 
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoMvvm)
+    commonMainImplementation(Deps.Libs.MultiPlatform.mokoMvvmCore)
     commonMainApi(Deps.Libs.MultiPlatform.mokoResources)
 
     // temporary fix of https://youtrack.jetbrains.com/issue/KT-41083

@@ -3,7 +3,7 @@
  */
 
 object Deps {
-    private const val kotlinVersion = "1.4.0"
+    private const val kotlinVersion = "1.4.21"
 
     private const val androidAppCompatVersion = "1.1.0"
     private const val materialDesignVersion = "1.0.0"
@@ -12,10 +12,10 @@ object Deps {
 
     private const val detektVersion = "1.7.4"
 
-    private const val coroutinesVersion = "1.3.9"
-    private const val mokoMvvmVersion = "0.8.0"
-    private const val mokoResourcesVersion = "0.13.1"
-    const val mokoErrorsVersion = "0.3.0"
+    private const val coroutinesVersion = "1.4.2"
+    private const val mokoMvvmVersion = "0.9.0"
+    private const val mokoResourcesVersion = "0.14.0"
+    const val mokoErrorsVersion = "0.3.1"
 
     object Android {
         const val compileSdk = 28
@@ -55,6 +55,8 @@ object Deps {
             const val lifecycle = "androidx.lifecycle:lifecycle-extensions:$androidLifecycleVersion"
             const val coroutines =
                 "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+
+            const val mokoMvvmDataBinding = "dev.icerock.moko:mvvm-databinding:$mokoMvvmVersion"
         }
 
         object MultiPlatform {
@@ -62,7 +64,8 @@ object Deps {
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
             const val mokoResources =
                 "dev.icerock.moko:resources:$mokoResourcesVersion"
-            const val mokoMvvm = "dev.icerock.moko:mvvm:$mokoMvvmVersion"
+            const val mokoMvvmCore = "dev.icerock.moko:mvvm-core:$mokoMvvmVersion"
+            const val mokoMvvmLiveData = "dev.icerock.moko:mvvm-livedata:$mokoMvvmVersion"
             const val mokoErrors = "dev.icerock.moko:errors:$mokoErrorsVersion"
         }
 

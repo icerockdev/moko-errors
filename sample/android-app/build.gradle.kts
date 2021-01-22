@@ -48,6 +48,7 @@ android {
 
 dependencies {
     implementation(Deps.Libs.Android.appCompat)
+    implementation(Deps.Libs.Android.mokoMvvmDataBinding)
 
     implementation(project(":sample:mpp-library"))
 }

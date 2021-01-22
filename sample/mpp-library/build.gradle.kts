@@ -15,7 +15,8 @@ dependencies {
 
     commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources)
     commonMainApi(Deps.Libs.MultiPlatform.mokoErrors)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvm)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvmCore)
+    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvmLiveData)
 
     androidMainImplementation(Deps.Libs.Android.lifecycle)
 }

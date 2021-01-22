@@ -12,7 +12,6 @@ import com.icerockdev.library.createSimpleViewModel
 import com.icerockdev.library.initExceptionStorage
 import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.createViewModelFactory
-import dev.icerock.moko.mvvm.dispatcher.eventsDispatcherOnMain
 
 class MainActivity : MvvmActivity<ActivityMainBinding, SimpleViewModel>() {
 
