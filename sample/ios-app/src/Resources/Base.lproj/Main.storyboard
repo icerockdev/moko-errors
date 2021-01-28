@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zIh-nI-gcX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="zIh-nI-gcX">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -34,18 +35,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rx-Ye-J02">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rx-Ye-J02">
                                 <rect key="frame" x="83" y="269" width="155" height="30"/>
                                 <state key="normal" title="Run alert error handler"/>
                                 <connections>
                                     <action selector="onRunAlertButtonPressed" destination="6re-OL-M6R" eventType="touchUpInside" id="2Ch-3e-3rj"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YvQ-Bf-oa4">
+                                <rect key="frame" x="144" y="325" width="32" height="30"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <segue destination="6re-OL-M6R" kind="show" identifier="selfPush" id="Mn9-3W-d9Q"/>
+                                </connections>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="3rx-Ye-J02" firstAttribute="top" secondItem="y8H-cS-RAJ" secondAttribute="bottom" constant="225" id="6oJ-lB-XzS"/>
+                            <constraint firstItem="YvQ-Bf-oa4" firstAttribute="top" secondItem="3rx-Ye-J02" secondAttribute="bottom" constant="26" id="7mZ-Rp-nlc"/>
                             <constraint firstItem="3rx-Ye-J02" firstAttribute="leading" secondItem="gvd-CR-NHm" secondAttribute="leadingMargin" constant="67" id="gvJ-bh-e0T"/>
+                            <constraint firstItem="YvQ-Bf-oa4" firstAttribute="centerX" secondItem="gvd-CR-NHm" secondAttribute="centerX" id="sgW-m8-wJW"/>
                             <constraint firstItem="nvA-y1-NIU" firstAttribute="top" secondItem="3rx-Ye-J02" secondAttribute="bottom" constant="269" id="vOq-ef-Au1"/>
                             <constraint firstAttribute="trailingMargin" secondItem="3rx-Ye-J02" secondAttribute="trailing" constant="66" id="vm2-s6-3pC"/>
                         </constraints>
@@ -57,4 +67,9 @@
             <point key="canvasLocation" x="-4260" y="-1482"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

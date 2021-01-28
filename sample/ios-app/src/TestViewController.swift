@@ -18,7 +18,12 @@ class TestViewController: UIViewController {
         viewModel.exceptionHandler.bind(viewController: self)
     }
     
+    deinit {
+        print("DEINIT \(self)")
+    }
+    
     @IBAction func onRunAlertButtonPressed() {
         viewModel.onAlertButtonClick()
     }
+    
 }
