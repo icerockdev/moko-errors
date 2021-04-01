@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'MultiPlatformLibrary'
-    spec.version                  = '0.3.1'
+    spec.version                  = '0.3.2'
     spec.homepage                 = 'Link to a Kotlin/Native module homepage'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = 'IceRock Development'
