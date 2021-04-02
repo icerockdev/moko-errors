@@ -27,7 +27,7 @@ allprojects {
         jcenter {
             content {
                 includeGroup("org.jetbrains.trove4j")
-                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
+                includeGroup("org.jetbrains.kotlinx")
             }
         }
     }
