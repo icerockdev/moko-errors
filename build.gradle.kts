@@ -4,13 +4,10 @@
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
 
-        maven { url = uri("https://dl.bintray.com/kotlin/kotlin") }
-        maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
-        maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
+        gradlePluginPortal()
     }
 
     dependencies {
@@ -24,12 +21,15 @@ plugins {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
 
-        maven { url = uri("https://kotlin.bintray.com/kotlin") }
-        maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-        maven { url = uri("https://dl.bintray.com/icerockdev/moko") }
+        jcenter {
+            content {
+                includeGroup("org.jetbrains.trove4j")
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
     }
 
     plugins.withId(Deps.Plugins.androidLibrary.id) {
