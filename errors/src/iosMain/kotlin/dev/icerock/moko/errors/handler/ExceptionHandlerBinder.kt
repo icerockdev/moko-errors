@@ -22,18 +22,23 @@ actual class ExceptionHandlerBinderImpl<T : Any> actual constructor(
     private var eventsListener: ErrorEventListener<T>? = null
 
     override fun bind(viewController: UIViewController) {
-        eventsListener = createEventsListener(viewController)
+        eventsListener = Listener(
+            viewController = viewController,
+            errorPresenter = errorPresenter
+        )
         eventsDispatcher.listener = eventsListener
     }
 
-    private fun createEventsListener(viewController: UIViewController) =
-        object : ErrorEventListener<T> {
-            val viewControllerRef = WeakReference(viewController)
+    private class Listener<T : Any>(
+        viewController: UIViewController,
+        private val errorPresenter: ErrorPresenter<T>
+    ) : ErrorEventListener<T> {
+        private val viewControllerRef = WeakReference(viewController)
 
-            override fun showError(throwable: Throwable, data: T) {
-                viewControllerRef.get()?.let {
-                    errorPresenter.show(throwable, it, data)
-                }
-            }
+        override fun showError(throwable: Throwable, data: T) {
+            val viewController = viewControllerRef.get() ?: return
+
+            errorPresenter.show(throwable, viewController, data)
         }
+    }
 }
