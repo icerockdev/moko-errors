@@ -181,14 +181,15 @@ fun onSendRequest() {
 }
 ```
 
-Also you can add some custom `catch` handlers for `ExceptionHandler`:
+Also you can add some custom `catch` handlers for `ExceptionHandler` that work as a catch in the
+try/catch operator:
 
 ```kotlin
 fun onSendRequest() {
     viewModelScope.launch {
         exceptionHandler.handle {
             serverRequest()
-        }.catch<IllegalArgumentException> {     // Specifying a specific exception class
+        }.catch<IllegalArgumentException> {     // Specifying exception class
             // Some custom handler code
             false                               // true - cancels ErrorPresenter; false - allows execution of ErrorsPresenter
         }.execute()                             // Starts code execution in `handle` lambda
