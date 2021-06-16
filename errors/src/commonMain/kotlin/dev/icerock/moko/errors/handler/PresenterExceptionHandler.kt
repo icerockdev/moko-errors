@@ -20,4 +20,9 @@ internal class PresenterExceptionHandler<T : Any>(
     override fun <R> handle(block: suspend () -> R): ExceptionHandlerContext<R> {
         return ExceptionHandlerContext(exceptionMapper, errorEventsDispatcher, onCatch, block)
     }
+
+    override fun showError(throwable: Throwable) {
+        val errorValue = exceptionMapper(throwable)
+        errorEventsDispatcher.dispatchEvent { showError(throwable, errorValue) }
+    }
 }
