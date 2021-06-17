@@ -59,7 +59,7 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
     private fun isHandledByCustomCatcher(cause: Throwable): Boolean {
         return catchers
             .firstOrNull { it.first.invoke(cause) } // Finds custom catcher by invoking conditions
-            ?.second?.invoke(cause)                 // If catcher was found then execute it
+            ?.second?.invoke(cause) // If catcher was found then execute it
             ?: false
     }
 }

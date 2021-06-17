@@ -7,7 +7,6 @@ package dev.icerock.moko.errors.handler
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.HandlerResult
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
-import kotlin.reflect.KClass
 
 abstract class ExceptionHandlerContext<R> {
     abstract suspend fun execute(): HandlerResult<R, Throwable>
