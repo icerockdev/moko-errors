@@ -7,6 +7,7 @@ package dev.icerock.moko.errors.handler
 import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.HandlerResult
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import kotlinx.coroutines.CancellationException
 
 private typealias Catcher = (Throwable) -> Boolean
 
@@ -38,7 +39,9 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
     override suspend fun execute(): HandlerResult<R, Throwable> {
         return try {
             HandlerResult.Success(block())
-        } catch (e: Throwable) {
+        } catch (e: Exception) {
+            // Don't handle coroutines CancellationException
+            if (e is CancellationException) throw e
             onCatch?.invoke(e)
             val isHandled = isHandledByCustomCatcher(e)
             if (!isHandled) { // If not handled by a custom catcher
