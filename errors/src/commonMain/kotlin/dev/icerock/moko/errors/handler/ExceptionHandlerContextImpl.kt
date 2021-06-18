@@ -8,7 +8,6 @@ import dev.icerock.moko.errors.ErrorEventListener
 import dev.icerock.moko.errors.HandlerResult
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.coroutines.CancellationException
-import kotlin.reflect.KClass
 
 private typealias Catcher = (Throwable) -> Boolean
 
@@ -18,15 +17,16 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
     private val onCatch: ((Throwable) -> Unit)?,
     private val block: suspend () -> R
 ) : ExceptionHandlerContext<R>() {
-    private val catchersMap = mutableMapOf<KClass<*>, Catcher>()
+    private val catchers = mutableListOf<Pair<(Throwable) -> Boolean, Catcher>>()
 
     private var finallyBlock: (() -> Unit)? = null
 
+    @Suppress("UNCHECKED_CAST")
     override fun <E : Throwable> catch(
-        clazz: KClass<E>,
+        condition: (Throwable) -> Boolean,
         catcher: (E) -> Boolean
     ): ExceptionHandlerContext<R> {
-        catchersMap[clazz] = catcher as Catcher
+        catchers.add(condition to catcher as Catcher)
         return this
     }
 
@@ -43,8 +43,8 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
             // Don't handle coroutines CancellationException
             if (e is CancellationException) throw e
             onCatch?.invoke(e)
-            val isHandled = catchersMap[e::class]?.invoke(e)
-            if (isHandled == null || isHandled == false) {
+            val isHandled = isHandledByCustomCatcher(e)
+            if (!isHandled) { // If not handled by a custom catcher
                 val errorValue = exceptionMapper(e)
                 eventsDispatcher.dispatchEvent {
                     showError(e, errorValue)
@@ -54,5 +54,12 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
         } finally {
             finallyBlock?.invoke()
         }
+    }
+
+    private fun isHandledByCustomCatcher(cause: Throwable): Boolean {
+        return catchers
+            .firstOrNull { it.first.invoke(cause) } // Finds custom catcher by invoking conditions
+            ?.second?.invoke(cause) // If catcher was found then execute it
+            ?: false
     }
 }
