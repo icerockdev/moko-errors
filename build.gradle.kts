@@ -11,46 +11,36 @@ buildscript {
     }
 
     dependencies {
-        plugin(Deps.Plugins.mokoResources)
-    }
-}
+        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.15.0")
+        classpath("dev.icerock.moko:resources-generator:0.15.1")
 
-plugins {
-    plugin(Deps.Plugins.detekt).apply(false)
+        classpath("dev.icerock:mobile-multiplatform:0.11.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20")
+        classpath("com.android.tools.build:gradle:4.2.1")
+    }
 }
 
 allprojects {
-    repositories {
-        mavenCentral()
-        google()
 
-        jcenter {
-            content {
-                includeGroup("org.jetbrains.trove4j")
-                includeGroup("org.jetbrains.kotlinx")
-            }
-        }
-    }
-
-    plugins.withId(Deps.Plugins.androidLibrary.id) {
+    plugins.withId("com.android.library") {
         configure<com.android.build.gradle.LibraryExtension> {
-            compileSdkVersion(Deps.Android.compileSdk)
+            compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
             defaultConfig {
-                minSdkVersion(Deps.Android.minSdk)
-                targetSdkVersion(Deps.Android.targetSdk)
+                minSdkVersion(libs.versions.minSdk.get().toInt())
+                targetSdkVersion(libs.versions.targetSdk.get().toInt())
             }
         }
     }
 
-    apply(plugin = Deps.Plugins.detekt.id)
+    apply(plugin = "io.gitlab.arturbosch.detekt")
 
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         input.setFrom("src/commonMain/kotlin", "src/androidMain/kotlin", "src/iosMain/kotlin")
     }
 
     dependencies {
-        "detektPlugins"(Deps.Libs.Detekt.detektFormatting)
+        "detektPlugins"(rootProject.libs.detektFormatting)
     }
 }
 

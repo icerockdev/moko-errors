@@ -3,22 +3,22 @@
  */
 
 plugins {
-    plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinMultiplatform)
-    plugin(Deps.Plugins.mobileMultiplatform)
-    plugin(Deps.Plugins.mokoResources)
-    plugin(Deps.Plugins.iosFramework)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("dev.icerock.mobile.multiplatform")
+    id("dev.icerock.mobile.multiplatform-resources")
+    id("dev.icerock.mobile.multiplatform.ios-framework")
 }
 
 dependencies {
-    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(libs.coroutines)
 
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoErrors)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvmCore)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoMvvmLiveData)
+    commonMainImplementation(libs.mokoResources)
+    commonMainApi(projects.errors)
+    commonMainApi(libs.mokoMvvmCore)
+    commonMainApi(libs.mokoMvvmLiveData)
 
-    androidMainImplementation(Deps.Libs.Android.lifecycle)
+    androidMainImplementation(libs.lifecycle)
 }
 
 multiplatformResources {

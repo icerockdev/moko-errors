@@ -1,6 +1,6 @@
 ![moko-errors](img/logo.png)
 
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/errors) ](https://repo1.maven.org/maven2/dev/icerock/moko/errors) ![kotlin-version](https://img.shields.io/badge/kotlin-1.4.31-orange)
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/errors) ](https://repo1.maven.org/maven2/dev/icerock/moko/errors) ![kotlin-version](https://img.shields.io/badge/kotlin-1.5.10-orange)
 
 # Mobile Kotlin errors
 This is a Kotlin MultiPlatform library that provides automatic exception handling and
@@ -33,20 +33,6 @@ on the platforms. Converts the exception class to an error object to display. Th
 - Android API 16+
 - iOS version 9.0+
 
-## Versions
-### Bintray
-- kotlin 1.3.72
-  - 0.1.0
-  - 0.2.0
-  - 0.2.1
-- kotlin 1.4.0
-  - 0.3.0
-- kotlin 1.4.21
-  - 0.3.1
-### mavenCentral
- - kotlin 1.4.31
-   - 0.3.2
-
 ## Installation
 root build.gradle  
 ```groovy
@@ -60,7 +46,7 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.3.2")
+    commonMainApi("dev.icerock.moko:errors:0.4.0")
 }
 ```
 

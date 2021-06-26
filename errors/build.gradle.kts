@@ -6,26 +6,26 @@ import java.util.Base64
 import kotlin.text.String
 
 plugins {
-    plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinMultiplatform)
-    plugin(Deps.Plugins.kotlinAndroidExtensions)
-    plugin(Deps.Plugins.mobileMultiplatform)
-    plugin(Deps.Plugins.mokoResources)
-    plugin(Deps.Plugins.mavenPublish)
-    plugin(Deps.Plugins.signing)
+    id("com.android.library")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("kotlin-android-extensions")
+    id("dev.icerock.mobile.multiplatform")
+    id("dev.icerock.mobile.multiplatform-resources")
+    id("org.gradle.maven-publish")
+    id("signing")
 }
 
 group = "dev.icerock.moko"
-version = Deps.mokoErrorsVersion
+version = libs.versions.mokoErrorsVersion.get()
 
 dependencies {
-    commonMainImplementation(Deps.Libs.MultiPlatform.coroutines)
+    commonMainImplementation(libs.coroutines)
 
-    androidMainImplementation(Deps.Libs.Android.appCompat)
-    androidMainImplementation(Deps.Libs.Android.material)
+    androidMainImplementation(libs.appCompat)
+    androidMainImplementation(libs.material)
 
-    commonMainImplementation(Deps.Libs.MultiPlatform.mokoMvvmCore)
-    commonMainApi(Deps.Libs.MultiPlatform.mokoResources)
+    commonMainImplementation(libs.mokoMvvmCore)
+    commonMainApi(libs.mokoResources)
 
     // temporary fix of https://youtrack.jetbrains.com/issue/KT-41083
     commonMainImplementation("dev.icerock.moko:parcelize:0.4.0")
