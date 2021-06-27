@@ -9,7 +9,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
     id("kotlin-android-extensions")
-    id("dev.icerock.mobile.multiplatform")
+   id("dev.icerock.mobile.multiplatform.android-manifest")
     id("dev.icerock.mobile.multiplatform-resources")
     id("org.gradle.maven-publish")
     id("signing")

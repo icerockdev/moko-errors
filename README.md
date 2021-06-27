@@ -1,7 +1,6 @@
 ![moko-errors](img/logo.png)
 
-[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/errors) ](https://repo1.maven.org/maven2/dev/icerock/moko/errors) ![kotlin-version](https://img.shields.io/badge/kotlin-1.5.20-orange)
-
+[![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0) [![Download](https://img.shields.io/maven-central/v/dev.icerock.moko/errors) ](https://repo1.maven.org/maven2/dev/icerock/moko/errors) ![kotlin-version](https://kotlin-version.aws.icerock.dev/kotlin-version?group=dev.icerock.moko&name=errors)
 # Mobile Kotlin errors
 This is a Kotlin MultiPlatform library that provides automatic exception handling and
 automatic error displaying to a screen.
@@ -9,7 +8,6 @@ automatic error displaying to a screen.
 ## Table of Contents
 - [Features](#features)
 - [Requirements](#requirements)
-- [Versions](#versions)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Samples](#samples)
