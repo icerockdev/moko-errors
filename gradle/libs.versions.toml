@@ -8,9 +8,6 @@ coroutinesVersion = "1.5.0-native-mt"
 mokoMvvmVersion = "0.11.0"
 mokoResourcesVersion = "0.16.0"
 mokoErrorsVersion = "0.4.0"
-compileSdk = "28"
-targetSdk = "28"
-minSdk = "16"
 
 [libraries]
 appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidAppCompatVersion" }
