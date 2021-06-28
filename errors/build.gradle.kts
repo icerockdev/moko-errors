@@ -8,11 +8,18 @@ import kotlin.text.String
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.multiplatform")
-    id("kotlin-android-extensions")
-   id("dev.icerock.mobile.multiplatform.android-manifest")
+    id("kotlin-parcelize")
+    id("dev.icerock.mobile.multiplatform.android-manifest")
     id("dev.icerock.mobile.multiplatform-resources")
     id("org.gradle.maven-publish")
     id("signing")
+}
+
+kotlin {
+    android {
+        publishLibraryVariants("release", "debug")
+    }
+    ios()
 }
 
 group = "dev.icerock.moko"
@@ -21,14 +28,12 @@ version = libs.versions.mokoErrorsVersion.get()
 dependencies {
     commonMainImplementation(libs.coroutines)
 
-    androidMainImplementation(libs.appCompat)
-    androidMainImplementation(libs.material)
+    "androidMainImplementation"(libs.appCompat)
+    "androidMainImplementation"(libs.material)
 
     commonMainImplementation(libs.mokoMvvmCore)
     commonMainApi(libs.mokoResources)
 
-    // temporary fix of https://youtrack.jetbrains.com/issue/KT-41083
-    commonMainImplementation("dev.icerock.moko:parcelize:0.4.0")
     commonMainImplementation("dev.icerock.moko:graphics:0.4.0")
 }
 
