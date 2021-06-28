@@ -14,33 +14,17 @@ buildscript {
         classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.15.0")
         classpath("dev.icerock.moko:resources-generator:0.16.0")
 
-        classpath("dev.icerock:mobile-multiplatform:0.12.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20")
-        classpath("com.android.tools.build:gradle:4.2.1")
+        classpath(":errors-build-logic")
     }
 }
 
 allprojects {
 
-    plugins.withId("com.android.library") {
-        configure<com.android.build.gradle.LibraryExtension> {
-            compileSdkVersion(libs.versions.compileSdk.get().toInt())
-
-            defaultConfig {
-                minSdkVersion(libs.versions.minSdk.get().toInt())
-                targetSdkVersion(libs.versions.targetSdk.get().toInt())
-            }
+    allprojects {
+        plugins.withId("org.gradle.maven-publish") {
+            group = "dev.icerock.moko"
+            version = libs.versions.mokoErrorsVersion.get()
         }
-    }
-
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-
-    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-        input.setFrom("src/commonMain/kotlin", "src/androidMain/kotlin", "src/iosMain/kotlin")
-    }
-
-    dependencies {
-        "detektPlugins"(rootProject.libs.detektFormatting)
     }
 }
 

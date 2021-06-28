@@ -27,9 +27,9 @@ on the platforms. Converts the exception class to an error object to display. Th
 `SelectorErrorPresenter` - for selecting error presenter by some custom condition.
 
 ## Requirements
-- Gradle version 6.0+
+- Gradle version 6.8+
 - Android API 16+
-- iOS version 9.0+
+- iOS version 11.0+
 
 ## Installation
 root build.gradle  

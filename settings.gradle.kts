@@ -20,6 +20,8 @@ dependencyResolutionManagement {
     }
 }
 
+includeBuild("errors-build-logic")
+
 include(":errors")
 include(":sample:android-app")
 include(":sample:mpp-library")
