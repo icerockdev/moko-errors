@@ -11,46 +11,19 @@ buildscript {
     }
 
     dependencies {
-        plugin(Deps.Plugins.mokoResources)
-    }
-}
+        classpath("dev.icerock.moko:resources-generator:0.16.0")
 
-plugins {
-    plugin(Deps.Plugins.detekt).apply(false)
+        classpath(":errors-build-logic")
+    }
 }
 
 allprojects {
-    repositories {
-        mavenCentral()
-        google()
 
-        jcenter {
-            content {
-                includeGroup("org.jetbrains.trove4j")
-                includeGroup("org.jetbrains.kotlinx")
-            }
+    allprojects {
+        plugins.withId("org.gradle.maven-publish") {
+            group = "dev.icerock.moko"
+            version = libs.versions.mokoErrorsVersion.get()
         }
-    }
-
-    plugins.withId(Deps.Plugins.androidLibrary.id) {
-        configure<com.android.build.gradle.LibraryExtension> {
-            compileSdkVersion(Deps.Android.compileSdk)
-
-            defaultConfig {
-                minSdkVersion(Deps.Android.minSdk)
-                targetSdkVersion(Deps.Android.targetSdk)
-            }
-        }
-    }
-
-    apply(plugin = Deps.Plugins.detekt.id)
-
-    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-        input.setFrom("src/commonMain/kotlin", "src/androidMain/kotlin", "src/iosMain/kotlin")
-    }
-
-    dependencies {
-        "detektPlugins"(Deps.Libs.Detekt.detektFormatting)
     }
 }
 

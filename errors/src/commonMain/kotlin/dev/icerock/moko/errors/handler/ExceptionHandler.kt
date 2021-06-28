@@ -11,6 +11,11 @@ import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 interface ExceptionHandler : ExceptionHandlerBinder {
     fun <R> handle(block: suspend () -> R): ExceptionHandlerContext<R>
 
+    /**
+     * Directly launches the error-presenter to display the error for exception [throwable].
+     */
+    fun showError(throwable: Throwable)
+
     companion object {
         operator fun <T : Any> invoke(
             exceptionMapper: ExceptionMapper<T>,
