@@ -5,7 +5,6 @@
 plugins {
     id("multiplatform-library-convention")
     id("kotlin-parcelize")
-    id("dev.icerock.mobile.multiplatform.android-manifest")
     id("dev.icerock.mobile.multiplatform-resources")
     id("detekt-convention")
     id("publication-convention")
@@ -22,8 +21,6 @@ dependencies {
 
     commonMainImplementation(libs.mokoMvvmCore)
     commonMainApi(libs.mokoResources)
-
-    commonMainImplementation("dev.icerock.moko:graphics:0.4.0")
 }
 
 multiplatformResources {
