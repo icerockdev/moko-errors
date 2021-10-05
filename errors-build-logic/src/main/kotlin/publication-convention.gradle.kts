@@ -36,6 +36,11 @@ publishing {
 
             developers {
                 developer {
+                    id.set("Tetraquark")
+                    name.set("Vladislav Areshkin")
+                    email.set("vareshkin@icerockdev.com")
+                }
+                developer {
                     id.set("Alex009")
                     name.set("Aleksey Mikhailov")
                     email.set("aleksey.mikhailov@icerockdev.com")
