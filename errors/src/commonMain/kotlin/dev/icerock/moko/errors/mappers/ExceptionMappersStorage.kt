@@ -167,4 +167,11 @@ object ExceptionMappersStorage {
     inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
         return throwableMapper(T::class)
     }
+
+    /**
+     * Factory method that allows getting exception description
+     */
+    inline fun <reified E : Throwable, reified T : Any> E.mapThrowable(): T {
+        return ExceptionMappersStorage.throwableMapper<E, T>(T::class)(this)
+    }
 }
