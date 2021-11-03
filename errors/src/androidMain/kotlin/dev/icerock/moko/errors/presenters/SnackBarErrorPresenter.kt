@@ -7,14 +7,17 @@ package dev.icerock.moko.errors.presenters
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
+import dev.icerock.moko.errors.R
 import dev.icerock.moko.resources.desc.StringDesc
 
 actual class SnackBarErrorPresenter actual constructor(
     private val duration: SnackBarDuration
 ) : ErrorPresenter<StringDesc> {
 
+
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
-        val rootView = activity.findViewById<View>(android.R.id.content)?.rootView
+        val rootView = activity.findViewById(R.id.snackbarContainer)
+            ?: activity.findViewById<View>(android.R.id.content)?.rootView
             ?: activity.window?.decorView?.findViewById<View>(android.R.id.content)
         if (rootView != null) {
             Snackbar.make(
