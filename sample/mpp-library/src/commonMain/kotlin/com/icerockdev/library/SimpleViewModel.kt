@@ -4,10 +4,8 @@
 
 package com.icerockdev.library
 
-import dev.icerock.moko.errors.MR
 import dev.icerock.moko.errors.handler.ExceptionHandler
 import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
-import dev.icerock.moko.errors.presenters.AlertErrorPresenter
 import dev.icerock.moko.errors.presenters.SelectorErrorPresenter
 import dev.icerock.moko.errors.presenters.SnackBarDuration
 import dev.icerock.moko.errors.presenters.SnackBarErrorPresenter
@@ -17,15 +15,12 @@ import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 fun createSimpleViewModel(): SimpleViewModel {
-    val alertErrorPresenter = SnackBarErrorPresenter(
+    val snackBarErrorPresenter = SnackBarErrorPresenter(
         duration = SnackBarDuration.SHORT
-//        alertTitle = MR.strings.moko_errors_presenters_alertDialogTitle.desc(),
-//        positiveButtonText = MR.strings.moko_errors_presenters_alertPositiveButton.desc()
     )
     val toastErrorPresenter = ToastErrorPresenter(
         duration = ToastDuration.LONG
@@ -34,7 +29,7 @@ fun createSimpleViewModel(): SimpleViewModel {
         exceptionHandler = ExceptionHandler(
             errorPresenter = SelectorErrorPresenter { throwable ->
                 when (throwable) {
-                    is CustomException -> alertErrorPresenter
+                    is CustomException -> snackBarErrorPresenter
                     else -> toastErrorPresenter
                 }
             },
