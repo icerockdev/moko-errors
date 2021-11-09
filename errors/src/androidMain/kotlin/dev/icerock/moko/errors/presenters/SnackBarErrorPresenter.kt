@@ -14,14 +14,16 @@ actual class SnackBarErrorPresenter actual constructor(
 ) : ErrorPresenter<StringDesc> {
 
     override fun show(throwable: Throwable, activity: FragmentActivity, data: StringDesc) {
-        val rootView = activity.findViewById<View>(android.R.id.content)?.rootView
+        val rootView = activity.findViewById<View>(android.R.id.content)
             ?: activity.window?.decorView?.findViewById<View>(android.R.id.content)
         if (rootView != null) {
-            Snackbar.make(
+           val snackbar = Snackbar.make(
                 rootView,
                 data.toString(activity),
                 duration.toAndroidCode()
-            ).show()
+            )
+            snackbar.anchorView = activity.actionBar?.customView
+            snackbar.show()
         }
     }
 }
