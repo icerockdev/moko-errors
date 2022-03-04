@@ -6,16 +6,18 @@ buildscript {
     repositories {
         mavenCentral()
         google()
-
         gradlePluginPortal()
     }
 
     dependencies {
-        classpath("dev.icerock.moko:resources-generator:0.16.0")
-
-        classpath(":errors-build-logic")
+        classpath(libs.kotlinGradlePlugin)
+        classpath(libs.androidGradlePlugin)
+        classpath(libs.mokoGradlePlugin)
+        classpath(libs.mokoResourcesGradlePlugin)
     }
 }
+
+apply(plugin = "dev.icerock.moko.gradle.publication.nexus")
 
 allprojects {
 

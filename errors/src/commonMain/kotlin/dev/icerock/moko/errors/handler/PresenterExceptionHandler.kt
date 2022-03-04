@@ -13,10 +13,9 @@ internal class PresenterExceptionHandler<T : Any>(
     private val errorPresenter: ErrorPresenter<T>,
     private val errorEventsDispatcher: EventsDispatcher<ErrorEventListener<T>>,
     private val onCatch: ((Throwable) -> Unit)? = null
-) : ExceptionHandlerBinder by ExceptionHandlerBinderImpl<T>(
-    errorPresenter,
-    errorEventsDispatcher
-), ExceptionHandler {
+) : ExceptionHandlerBinder by ExceptionHandlerBinderImpl(errorPresenter, errorEventsDispatcher),
+    ExceptionHandler {
+
     override fun <R> handle(block: suspend () -> R): ExceptionHandlerContext<R> {
         return ExceptionHandlerContext(exceptionMapper, errorEventsDispatcher, onCatch, block)
     }
