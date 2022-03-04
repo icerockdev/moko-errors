@@ -19,10 +19,10 @@ buildscript {
 
 apply(plugin = "dev.icerock.moko.gradle.publication.nexus")
 
-val version = libs.versions.mokoErrorsVersion.get()
+val mokoVersion = libs.versions.mokoErrorsVersion.get()
 allprojects {
     this.group = "dev.icerock.moko"
-    this.version = version
+    this.version = mokoVersion
 }
 
 tasks.register("clean", Delete::class).configure {
