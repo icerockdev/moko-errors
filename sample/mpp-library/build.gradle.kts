@@ -4,17 +4,13 @@
 
 plugins {
     id("com.android.library")
-    id("android-base-convention")
-    id("detekt-convention")
+    id("dev.icerock.moko.gradle.android.base")
     id("org.jetbrains.kotlin.multiplatform")
+    id("dev.icerock.mobile.multiplatform.targets")
     id("dev.icerock.mobile.multiplatform.android-manifest")
     id("dev.icerock.mobile.multiplatform-resources")
     id("dev.icerock.mobile.multiplatform.ios-framework")
-}
-
-kotlin {
-    android()
-    ios()
+    id("dev.icerock.moko.gradle.detekt")
 }
 
 dependencies {
@@ -25,7 +21,7 @@ dependencies {
     commonMainApi(libs.mokoMvvmCore)
     commonMainApi(libs.mokoMvvmLiveData)
 
-    "androidMainImplementation"(libs.lifecycle)
+    androidMainImplementation(libs.lifecycle)
 }
 
 multiplatformResources {

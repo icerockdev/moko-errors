@@ -44,7 +44,7 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.5.1")
+    commonMainApi("dev.icerock.moko:errors:0.6.0")
 }
 ```
 

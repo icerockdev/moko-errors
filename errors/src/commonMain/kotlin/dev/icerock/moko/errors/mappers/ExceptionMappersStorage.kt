@@ -36,7 +36,8 @@ object ExceptionMappersStorage {
         if (!mappersMap.containsKey(resultClass)) {
             mappersMap[resultClass] = mutableMapOf()
         }
-        mappersMap.get(resultClass)?.put(exceptionClass, mapper as ThrowableMapper)
+        @Suppress("UNCHECKED_CAST")
+        mappersMap[resultClass]?.put(exceptionClass, mapper as ThrowableMapper)
         return this
     }
 
@@ -50,7 +51,7 @@ object ExceptionMappersStorage {
         if (!conditionMappers.containsKey(resultClass)) {
             conditionMappers[resultClass] = mutableListOf()
         }
-        conditionMappers.get(resultClass)?.add(conditionPair)
+        conditionMappers[resultClass]?.add(conditionPair)
         return this
     }
 
@@ -93,10 +94,11 @@ object ExceptionMappersStorage {
         throwable: E,
         exceptionClass: KClass<out E>
     ): ((E) -> T)? {
-        val mapper = conditionMappers.get(resultClass)
+        @Suppress("UNCHECKED_CAST")
+        val mapper = conditionMappers[resultClass]
             ?.find { it.condition(throwable) }
             ?.mapper as? ((E) -> T)
-            ?: mappersMap.get(resultClass)?.get(exceptionClass) as? ((E) -> T)
+            ?: mappersMap[resultClass]?.get(exceptionClass) as? ((E) -> T)
 
         return if (mapper == null && throwable !is Exception) {
             throw throwable
@@ -138,6 +140,7 @@ object ExceptionMappersStorage {
      * exception will be thrown.
      */
     fun <T : Any> getFallbackValue(clazz: KClass<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return fallbackValuesMap[clazz] as? T
             ?: throw FallbackValueNotFoundException(clazz)
     }
@@ -160,13 +163,17 @@ object ExceptionMappersStorage {
         }
     }
 
-    /**
-     * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
-     * class [T].
-     */
     inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
-        return ExceptionMappersStorage.throwableMapper(T::class)
+        return dev.icerock.moko.errors.mappers.throwableMapper()
     }
+}
+
+/**
+ * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
+ * class [T].
+ */
+inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
+    return ExceptionMappersStorage.throwableMapper(T::class)
 }
 
 /**
