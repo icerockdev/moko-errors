@@ -10,13 +10,12 @@ import android.os.Parcelable
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import dev.icerock.moko.errors.R
-import kotlinx.android.parcel.Parcelize
-import java.lang.IllegalStateException
+import kotlinx.parcelize.Parcelize
 
 class AlertDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val settings: DialogSettings = arguments?.getParcelable<DialogSettings>(ARGS_KEY)
+        val settings: DialogSettings = arguments?.getParcelable(ARGS_KEY)
             ?: DialogSettings(
                 title = getString(R.string.moko_errors_presenters_alertDialogTitle),
                 positiveButtonText = getString(R.string.moko_errors_presenters_alertPositiveButton),

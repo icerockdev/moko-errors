@@ -5,7 +5,7 @@
 package com.icerockdev.library
 
 import dev.icerock.moko.errors.handler.ExceptionHandler
-import dev.icerock.moko.errors.mappers.ExceptionMappersStorage
+import dev.icerock.moko.errors.mappers.throwableMapper
 import dev.icerock.moko.errors.presenters.SelectorErrorPresenter
 import dev.icerock.moko.errors.presenters.SnackBarDuration
 import dev.icerock.moko.errors.presenters.SnackBarErrorPresenter
@@ -33,7 +33,7 @@ fun createSimpleViewModel(): SimpleViewModel {
                     else -> toastErrorPresenter
                 }
             },
-            exceptionMapper = ExceptionMappersStorage.throwableMapper(),
+            exceptionMapper = throwableMapper(),
             onCatch = {
                 // E.g. here we can log all exceptions that are handled by ExceptionHandler
                 println("Got exception: $it")
@@ -73,7 +73,7 @@ class SimpleViewModel(
             throw CustomException(Random.nextInt(2) * 10)
         } else {
             exceptionFlag = !exceptionFlag
-            throw IllegalArgumentException()
+            throw IllegalArgumentException("some error")
         }
     }
 }
