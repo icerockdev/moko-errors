@@ -20,7 +20,7 @@ object ExceptionMappersStorage {
             fallback = { MR.strings.moko_errors_unknownError.desc() }
         )
     )
-    private val notifiers: MutableList<(Throwable, KClass<*>) -> Unit> = mutableListOf()
+    private val notifiers: MutableList<(Throwable, KClass<*>, Any) -> Unit> = mutableListOf()
 
     private fun <T : Any> getOrCreateContainer(resultClass: KClass<T>): MappersContainer<T> {
         val existContainer: MappersContainer<*>? = containers[resultClass]
@@ -132,10 +132,11 @@ object ExceptionMappersStorage {
             ?: container.fallback
 
         return { exception ->
+            val result: T = mapper(exception)
             notifiers.forEach { notifier ->
-                notifier(exception, resultClass)
+                notifier(exception, resultClass, result)
             }
-            mapper(exception)
+            result
         }
     }
 
@@ -208,7 +209,7 @@ object ExceptionMappersStorage {
      * @param block - lambda that will be called when exception map to some class
      */
     fun onEach(
-        block: (Throwable, KClass<*>) -> Unit
+        block: (Throwable, KClass<*>, Any) -> Unit
     ): ExceptionMappersStorage {
         notifiers.add(block)
         return this
