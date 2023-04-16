@@ -203,6 +203,10 @@ object ExceptionMappersStorage {
         }
     }
 
+    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
+        return dev.icerock.moko.errors.mappers.throwableMapper()
+    }
+
     /**
      * Listen all mappers calls. Useful for logging
      *
