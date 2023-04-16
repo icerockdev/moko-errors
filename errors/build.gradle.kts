@@ -2,6 +2,8 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
+import dev.icerock.gradle.tasks.GenerateMultiplatformResourcesTask
+
 plugins {
     id("dev.icerock.moko.gradle.multiplatform.mobile")
     id("kotlin-parcelize")
@@ -13,6 +15,10 @@ plugins {
 
 group = "dev.icerock.moko"
 version = libs.versions.mokoErrorsVersion.get()
+
+android {
+    namespace = "dev.icerock.moko.errors"
+}
 
 dependencies {
     commonMainImplementation(libs.coroutines)
@@ -28,3 +34,6 @@ multiplatformResources {
     multiplatformResourcesPackage = "dev.icerock.moko.errors"
 }
 
+tasks.withType<GenerateMultiplatformResourcesTask>().configureEach {
+    tasks.getByName("sourcesJar").dependsOn(this)
+}
