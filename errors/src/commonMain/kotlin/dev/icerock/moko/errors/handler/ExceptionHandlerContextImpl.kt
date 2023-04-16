@@ -39,13 +39,14 @@ internal class ExceptionHandlerContextImpl<T : Any, R>(
     override suspend fun execute(): HandlerResult<R, Throwable> {
         return try {
             HandlerResult.Success(block())
-        } catch (e: Exception) {
+        } catch (e: CancellationException) {
             // Don't handle coroutines CancellationException
-            if (e is CancellationException) throw e
+            throw e
+        } catch (e: Exception) {
             onCatch?.invoke(e)
-            val isHandled = isHandledByCustomCatcher(e)
+            val isHandled: Boolean = isHandledByCustomCatcher(e)
             if (!isHandled) { // If not handled by a custom catcher
-                val errorValue = exceptionMapper(e)
+                val errorValue: T = exceptionMapper(e)
                 eventsDispatcher.dispatchEvent {
                     showError(e, errorValue)
                 }

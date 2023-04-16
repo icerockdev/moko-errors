@@ -1,13 +1,13 @@
 [versions]
-kotlinVersion = "1.6.10"
-androidAppCompatVersion = "1.2.0"
-materialDesignVersion = "1.4.0"
-androidLifecycleVersion = "2.1.0"
-androidCoreTestingVersion = "2.1.0"
-coroutinesVersion = "1.6.0-native-mt"
-mokoMvvmVersion = "0.12.0"
-mokoResourcesVersion = "0.18.0"
-mokoErrorsVersion = "0.6.0"
+kotlinVersion = "1.8.10"
+androidAppCompatVersion = "1.6.1"
+materialDesignVersion = "1.8.0"
+androidLifecycleVersion = "2.2.0"
+androidCoreTestingVersion = "2.2.0"
+coroutinesVersion = "1.6.4"
+mokoMvvmVersion = "0.16.0"
+mokoResourcesVersion = "0.21.2"
+mokoErrorsVersion = "0.7.0"
 
 [libraries]
 # android
@@ -30,6 +30,6 @@ androidCoreTesting = { module = "androidx.arch.core:core-testing", version.ref =
 
 # gradle plugins
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinVersion" }
-androidGradlePlugin = { module = "com.android.tools.build:gradle", version = "7.0.4" }
+androidGradlePlugin = { module = "com.android.tools.build:gradle", version = "7.4.2" }
 mokoResourcesGradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResourcesVersion" }
-mokoGradlePlugin = { module = "dev.icerock.moko:moko-gradle-plugin", version = "0.1.0" }
+mokoGradlePlugin = { module = "dev.icerock.moko:moko-gradle-plugin", version = "0.3.0" }
