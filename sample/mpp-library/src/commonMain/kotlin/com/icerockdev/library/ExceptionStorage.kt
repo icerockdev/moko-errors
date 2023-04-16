@@ -14,4 +14,7 @@ fun initExceptionStorage() {
         .register<IllegalArgumentException, StringDesc> {
             MR.strings.illegalArgumentText.desc()
         }
+        .onEach { throwable, kClass, result ->
+            println("$throwable mapped to $kClass with result $result")
+        }
 }
