@@ -11,6 +11,8 @@ plugins {
 android {
     buildFeatures.dataBinding = true
 
+    namespace = "com.icerockdev"
+
     defaultConfig {
         applicationId = "dev.icerock.moko.samples.errors"
 

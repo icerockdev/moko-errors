@@ -28,7 +28,7 @@ class AlertDialogFragment : DialogFragment() {
                 .setMessage(settings.messageText)
                 .setPositiveButton(settings.positiveButtonText) { _, _ -> }
                 .create()
-        } ?: throw IllegalStateException("Activity can't be null.")
+        } ?: error("Activity can't be null.")
     }
 
     @Parcelize
