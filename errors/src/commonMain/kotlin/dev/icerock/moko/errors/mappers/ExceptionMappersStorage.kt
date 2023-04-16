@@ -10,20 +10,34 @@ import dev.icerock.moko.resources.desc.desc
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
-internal typealias ThrowableMapper = (Throwable) -> Any
-
 @Suppress("TooManyFunctions")
 @ThreadLocal
 object ExceptionMappersStorage {
 
-    private val fallbackValuesMap: MutableMap<KClass<out Any>, Any> = mutableMapOf(
-        StringDesc::class to MR.strings.moko_errors_unknownError.desc()
+    private val containers: MutableMap<KClass<*>, MappersContainer<*>> = mutableMapOf(
+        StringDesc::class to MappersContainer<StringDesc>(
+            mappers = emptyList(),
+            fallback = { MR.strings.moko_errors_unknownError.desc() }
+        )
     )
 
-    private val mappersMap: MutableMap<KClass<out Any>, MutableMap<KClass<out Throwable>, ThrowableMapper>> =
-        mutableMapOf()
-    private val conditionMappers: MutableMap<KClass<out Any>, MutableList<ConditionPair>> =
-        mutableMapOf()
+    private fun <T : Any> getOrCreateContainer(resultClass: KClass<T>): MappersContainer<T> {
+        val existContainer: MappersContainer<*>? = containers[resultClass]
+        if (existContainer != null) return existContainer as MappersContainer<T>
+
+        return MappersContainer<T>(
+            mappers = emptyList(),
+            fallback = { throw FallbackValueNotFoundException(resultClass) }
+        ).also { containers[resultClass] = it }
+    }
+
+    private fun <T : Any> updateContainer(
+        resultClass: KClass<T>,
+        block: (MappersContainer<T>) -> MappersContainer<T>
+    ) {
+        val container: MappersContainer<T> = getOrCreateContainer(resultClass)
+        containers[resultClass] = block(container)
+    }
 
     /**
      * Register simple mapper (E) -> T.
@@ -33,11 +47,16 @@ object ExceptionMappersStorage {
         exceptionClass: KClass<E>,
         mapper: (E) -> T
     ): ExceptionMappersStorage {
-        if (!mappersMap.containsKey(resultClass)) {
-            mappersMap[resultClass] = mutableMapOf()
+        updateContainer(
+            resultClass
+        ) { container ->
+            container.copy(
+                mappers = container.mappers + ThrowableMapperItem(
+                    mapper = { mapper(it as E) },
+                    isApplied = { it::class == exceptionClass }
+                )
+            )
         }
-        @Suppress("UNCHECKED_CAST")
-        mappersMap[resultClass]?.put(exceptionClass, mapper as ThrowableMapper)
         return this
     }
 
@@ -46,12 +65,19 @@ object ExceptionMappersStorage {
      */
     fun <T : Any> register(
         resultClass: KClass<T>,
-        conditionPair: ConditionPair
+        isApplied: (Throwable) -> Boolean,
+        mapper: (Throwable) -> T
     ): ExceptionMappersStorage {
-        if (!conditionMappers.containsKey(resultClass)) {
-            conditionMappers[resultClass] = mutableListOf()
+        updateContainer(
+            resultClass
+        ) { container ->
+            container.copy(
+                mappers = container.mappers + ThrowableMapperItem(
+                    mapper = mapper,
+                    isApplied = isApplied
+                )
+            )
         }
-        conditionMappers[resultClass]?.add(conditionPair)
         return this
     }
 
@@ -76,10 +102,8 @@ object ExceptionMappersStorage {
         noinline mapper: (Throwable) -> T
     ): ExceptionMappersStorage = register(
         resultClass = T::class,
-        conditionPair = ConditionPair(
-            condition,
-            mapper as ThrowableMapper
-        )
+        isApplied = condition,
+        mapper = mapper
     )
 
     /**
@@ -91,20 +115,20 @@ object ExceptionMappersStorage {
      */
     fun <E : Throwable, T : Any> find(
         resultClass: KClass<T>,
-        throwable: E,
-        exceptionClass: KClass<out E>
+        throwable: E
     ): ((E) -> T)? {
-        @Suppress("UNCHECKED_CAST")
-        val mapper = conditionMappers[resultClass]
-            ?.find { it.condition(throwable) }
-            ?.mapper as? ((E) -> T)
-            ?: mappersMap[resultClass]?.get(exceptionClass) as? ((E) -> T)
+        val container: MappersContainer<T>? = containers[resultClass] as MappersContainer<T>?
 
-        return if (mapper == null && throwable !is Exception) {
+        if (container == null && throwable !is Exception) {
             throw throwable
-        } else {
-            mapper
+        } else if (container == null) {
+            return null
         }
+
+        return container.mappers
+            .firstOrNull { it.isApplied(throwable) }
+            ?.mapper
+            ?: container.fallback
     }
 
     /**
@@ -116,16 +140,21 @@ object ExceptionMappersStorage {
      */
     inline fun <E : Throwable, reified T : Any> find(throwable: E): ((E) -> T)? = find(
         resultClass = T::class,
-        throwable = throwable,
-        exceptionClass = throwable::class
+        throwable = throwable
     )
 
     /**
      * Sets fallback (default) value for [T] errors type.
      */
     fun <T : Any> setFallbackValue(clazz: KClass<T>, value: T): ExceptionMappersStorage {
-        fallbackValuesMap[clazz] = value
-        return ExceptionMappersStorage
+        updateContainer(
+            clazz
+        ) { container ->
+            container.copy(
+                fallback = { value }
+            )
+        }
+        return this
     }
 
     /**
@@ -135,36 +164,34 @@ object ExceptionMappersStorage {
         setFallbackValue(T::class, value)
 
     /**
-     * Returns fallback (default) value for [T] errors type.
-     * If there is no default value for the class [T], then [FallbackValueNotFoundException]
-     * exception will be thrown.
+     * Sets fallback (default) factory for [T] errors type.
      */
-    fun <T : Any> getFallbackValue(clazz: KClass<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return fallbackValuesMap[clazz] as? T
-            ?: throw FallbackValueNotFoundException(clazz)
+    fun <T : Any> setFallbackFactory(
+        clazz: KClass<T>,
+        factory: (Throwable) -> T
+    ): ExceptionMappersStorage {
+        updateContainer(
+            clazz
+        ) { container ->
+            container.copy(
+                fallback = factory
+            )
+        }
+        return this
     }
 
-    /**
-     * Returns fallback (default) value for [T] errors type.
-     * If there is no default value for the class [T], then [FallbackValueNotFoundException]
-     * exception will be thrown.
-     */
-    inline fun <reified T : Any> getFallbackValue(): T = getFallbackValue(T::class)
+    inline fun <reified T : Any> setFallbackFactory(
+        noinline factory: (Throwable) -> T
+    ): ExceptionMappersStorage = setFallbackFactory(T::class, factory)
 
     /**
      * Factory method that creates mappers (Throwable) -> T with a registered fallback value for
      * class [T].
      */
     fun <E : Throwable, T : Any> throwableMapper(clazz: KClass<T>): (e: E) -> T {
-        val fallback = getFallbackValue(clazz)
         return { e ->
-            find(clazz, e, e::class)?.invoke(e) ?: fallback
+            find(clazz, e)?.invoke(e) ?: throw FallbackValueNotFoundException(clazz)
         }
-    }
-
-    inline fun <E : Throwable, reified T : Any> throwableMapper(): (e: E) -> T {
-        return dev.icerock.moko.errors.mappers.throwableMapper()
     }
 }
 
