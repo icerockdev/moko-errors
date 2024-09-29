@@ -27,6 +27,7 @@ on the platforms. Converts the exception class to an error object to display. Th
 `SelectorErrorPresenter` - for selecting error presenter by some custom condition.
 
 ## Requirements
+- Kotlin 1.9.0
 - Gradle version 6.8+
 - Android API 16+
 - iOS version 11.0+
@@ -44,7 +45,7 @@ allprojects {
 project build.gradle
 ```groovy
 dependencies {
-    commonMainApi("dev.icerock.moko:errors:0.6.0")
+    commonMainApi("dev.icerock.moko:errors:0.8.0")
 }
 ```
 
