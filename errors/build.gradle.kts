@@ -31,7 +31,7 @@ dependencies {
 }
 
 multiplatformResources {
-    multiplatformResourcesPackage = "dev.icerock.moko.errors"
+    resourcesPackage.set("dev.icerock.moko.errors")
 }
 
 tasks.withType<GenerateMultiplatformResourcesTask>().configureEach {
