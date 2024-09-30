@@ -27,7 +27,8 @@ jobs:
           java-version: 17
           distribution: zulu
       - name: Publish
-        run: ./gradlew publish
+#        gradle configuration cache not supported in https://github.com/gradle-nexus/publish-plugin
+        run: ./gradlew publish --no-configuration-cache
 
   release:
     name: Create release
