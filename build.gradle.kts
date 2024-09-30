@@ -23,6 +23,12 @@ val mokoVersion = libs.versions.mokoErrorsVersion.get()
 allprojects {
     this.group = "dev.icerock.moko"
     this.version = mokoVersion
+
+    // fix Reason: Task ':errors:publishAndroidPublicationToSonatypeRepository' uses this output of task ':errors:signIosArm64Publication' without declaring an explicit or implicit dependency. This can lead to incorrect results being produced, depending on what order the tasks are executed.
+    val signingTasks = tasks.withType<Sign>()
+    tasks.withType<AbstractPublishToMaven>().configureEach {
+        dependsOn(signingTasks)
+    }
 }
 
 tasks.register("clean", Delete::class).configure {
