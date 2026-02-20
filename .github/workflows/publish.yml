@@ -26,9 +26,12 @@ jobs:
         with:
           java-version: 17
           distribution: zulu
+      - name: Prebuild library
+        run: ./gradlew publishToMavenLocal
       - name: Publish
-#        gradle configuration cache not supported in https://github.com/gradle-nexus/publish-plugin
-        run: ./gradlew publish --no-configuration-cache
+        # Publish plugin lacks configuration cache support:
+        # https://github.com/gradle-nexus/publish-plugin/issues/221
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --no-configuration-cache
 
   release:
     name: Create release
